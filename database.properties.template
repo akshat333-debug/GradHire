@@ -1,0 +1,180 @@
+# =============================================
+# GradHire - Database Configuration Template
+# =============================================
+# 
+# INSTRUCTIONS:
+# 1. Copy this file to 'database.properties'
+# 2. Update the values below with your actual database credentials
+# 3. Never commit database.properties to version control
+#
+# Example:
+#   cp database.properties.template database.properties
+#
+# =============================================
+
+# =============================================
+# Database Connection Settings
+# =============================================
+
+# Database URL
+# Format: jdbc:mysql://hostname:port/database_name?parameters
+db.url=jdbc:mysql://localhost:3306/gradhire_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+
+# Database Credentials
+# IMPORTANT: Replace with your actual MySQL credentials
+db.username=root
+db.password=YOUR_PASSWORD_HERE
+
+# JDBC Driver Class (Do not change unless using different DB)
+db.driver=com.mysql.cj.jdbc.Driver
+
+# =============================================
+# Connection Pool Settings
+# =============================================
+
+# Initial number of connections in the pool
+db.pool.initialSize=5
+
+# Maximum number of active connections
+db.pool.maxTotal=20
+
+# Maximum number of idle connections
+db.pool.maxIdle=10
+
+# Minimum number of idle connections
+db.pool.minIdle=5
+
+# Maximum wait time for a connection (in milliseconds)
+db.pool.maxWaitMillis=10000
+
+# Test query to verify connection is alive
+db.pool.validationQuery=SELECT 1
+
+# =============================================
+# Development vs Production Settings
+# =============================================
+
+# Environment: development | production | test
+app.environment=development
+
+# Enable SQL query logging (true for development, false for production)
+db.logging.enabled=true
+
+# Show SQL in console
+db.show.sql=true
+
+# =============================================
+# Security Settings
+# =============================================
+
+# BCrypt password hashing cost factor (higher = more secure but slower)
+# Recommended: 10-12 for production
+security.bcrypt.rounds=10
+
+# Session timeout in minutes
+session.timeout.minutes=30
+
+# Maximum login attempts before lockout
+security.max.login.attempts=5
+
+# Account lockout duration in minutes
+security.lockout.duration.minutes=15
+
+# =============================================
+# File Upload Settings
+# =============================================
+
+# Base directory for file uploads (resumes, profile pictures)
+upload.base.directory=/var/gradhire/uploads
+
+# Maximum resume file size in MB
+upload.resume.max.size.mb=5
+
+# Allowed resume file types (comma-separated)
+upload.resume.allowed.types=pdf,doc,docx
+
+# Maximum profile picture size in MB
+upload.profile.picture.max.size.mb=2
+
+# Allowed image file types (comma-separated)
+upload.image.allowed.types=jpg,jpeg,png
+
+# =============================================
+# Email Configuration (Optional - for future use)
+# =============================================
+
+# SMTP Server Settings
+email.smtp.host=smtp.gmail.com
+email.smtp.port=587
+email.smtp.username=YOUR_EMAIL@gmail.com
+email.smtp.password=YOUR_EMAIL_PASSWORD
+email.smtp.auth=true
+email.smtp.starttls.enable=true
+
+# Email sender details
+email.from.address=noreply@gradhire.com
+email.from.name=GradHire
+
+# =============================================
+# Application Settings
+# =============================================
+
+# Application name
+app.name=GradHire
+
+# Application URL (used in emails and redirects)
+app.url=http://localhost:8080/gradhire
+
+# Pagination settings
+app.pagination.page.size=10
+
+# Number of job recommendations to show
+app.recommendations.limit=10
+
+# =============================================
+# Logging Configuration
+# =============================================
+
+# Log file location
+log.file.path=/var/log/gradhire/application.log
+
+# Log level: DEBUG | INFO | WARN | ERROR
+log.level=INFO
+
+# =============================================
+# Cache Settings (Optional)
+# =============================================
+
+# Enable caching
+cache.enabled=true
+
+# Cache TTL in seconds
+cache.ttl.seconds=300
+
+# =============================================
+# API Rate Limiting (Optional)
+# =============================================
+
+# Enable rate limiting
+ratelimit.enabled=true
+
+# Maximum requests per minute
+ratelimit.requests.per.minute=60
+
+# =============================================
+# Database Credentials for Different Environments
+# =============================================
+# Uncomment the section for your environment
+
+# DEVELOPMENT
+# db.username=gradhire_user
+# db.password=dev_password_123
+
+# PRODUCTION (use strong passwords!)
+# db.username=gradhire_prod_user
+# db.password=STRONG_SECURE_PASSWORD_HERE
+
+# TEST
+# db.username=gradhire_test_user
+# db.password=test_password_123
+

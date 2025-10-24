@@ -1,0 +1,179 @@
+# GradHire - Git Ignore File
+
+# ====================================
+# Java Compiled Files
+# ====================================
+*.class
+*.jar
+*.war
+*.ear
+
+# Build directories
+build/
+dist/
+target/
+out/
+bin/
+
+# ====================================
+# IDE Specific Files
+# ====================================
+
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+nb-configuration.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+
+# VS Code / Cursor
+.vscode/
+.cursor/
+*.code-workspace
+
+# ====================================
+# Database Configuration
+# ====================================
+*.properties
+database.properties
+application.properties
+db.properties
+
+# Keep example config files
+!*.properties.example
+!*.properties.template
+
+# Database dumps and backups
+*.sql.backup
+*_backup.sql
+*.dump
+
+# ====================================
+# Logs
+# ====================================
+*.log
+logs/
+log/
+
+# ====================================
+# Temporary Files
+# ====================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ====================================
+# Uploaded Files (Resumes, etc.)
+# ====================================
+uploads/
+resumes/
+profile_pictures/
+
+# Keep directories but ignore contents
+!uploads/.gitkeep
+!resumes/.gitkeep
+!profile_pictures/.gitkeep
+
+# ====================================
+# Environment Files
+# ====================================
+.env
+.env.local
+.env.development
+.env.production
+
+# ====================================
+# Package Files
+# ====================================
+node_modules/
+bower_components/
+
+# ====================================
+# OS Files
+# ====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ====================================
+# Apache Tomcat
+# ====================================
+catalina.out
+catalina.base
+tomcat.*.log
+
+# ====================================
+# Security & Credentials
+# ====================================
+*password*
+*secret*
+*credentials*
+*.key
+*.pem
+*.p12
+*.jks
+
+# Keep example/template files
+!*password*.example
+!*secret*.template
+
+# ====================================
+# Maven
+# ====================================
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# ====================================
+# Gradle
+# ====================================
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# ====================================
+# Test Coverage
+# ====================================
+coverage/
+*.cover
+.coverage
+htmlcov/
+
+# ====================================
+# Documentation Build
+# ====================================
+docs/_build/
+site/
+
+# ====================================
+# Misc
+# ====================================
+*.bak
+*.cache
+*.orig
+
