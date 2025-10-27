@@ -1,0 +1,195 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║        🧪 GradHire - Quick Test Data Reference                ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📋 QUICK REGISTRATION DATA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👨‍🎓 STUDENT ACCOUNT #1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email:          john.doe@university.edu
+Password:       Student123!
+Full Name:      John Doe
+Phone:          555-123-4567
+University:     Stanford University
+Major:          Computer Science
+Graduation:     2025
+Skills:         Java, Python, React, MySQL, Spring Boot
+
+👨‍🎓 STUDENT ACCOUNT #2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email:          jane.smith@college.edu
+Password:       Student123!
+Full Name:      Jane Smith
+Phone:          555-234-5678
+University:     MIT
+Major:          Data Science
+Graduation:     2024
+Skills:         Python, Machine Learning, TensorFlow, SQL, R
+
+👔 RECRUITER ACCOUNT #1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email:          hr@google.com
+Password:       Recruiter123!
+Full Name:      Sarah Williams
+Company:        Google
+Phone:          650-253-0000
+Website:        https://google.com
+
+👔 RECRUITER ACCOUNT #2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email:          recruiting@microsoft.com
+Password:       Recruiter123!
+Full Name:      David Chen
+Company:        Microsoft
+Phone:          425-882-8080
+Website:        https://microsoft.com
+
+
+💼 SAMPLE JOB POSTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Title:          Software Engineer Intern
+Company:        Google
+Location:       Mountain View, CA
+Remote:         Hybrid
+Type:           Internship
+Domain:         Software Development
+Salary Min:     8000 (per month)
+Salary Max:     10000 (per month)
+Deadline:       2025-12-31
+
+Description:
+Join Google's engineering team for a summer internship! Work on 
+cutting-edge projects in distributed systems, machine learning, 
+and cloud infrastructure.
+
+Requirements:
+- Currently pursuing BS/MS in Computer Science
+- Strong programming skills in Java, Python, or C++
+- Understanding of data structures and algorithms
+- Previous internship experience preferred
+
+Required Skills:
+Java, Python, Data Structures, Algorithms, Git
+
+
+📝 SAMPLE COVER LETTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Dear Hiring Manager,
+
+I am excited to apply for the Software Engineer Intern position 
+at Google. As a Computer Science student at Stanford University 
+with strong Java and Python skills, I am eager to contribute to 
+your team.
+
+I have completed several projects involving distributed systems 
+and have a solid foundation in data structures and algorithms. 
+I am passionate about learning and would love to contribute to 
+Google's innovative projects.
+
+Thank you for your consideration.
+
+Best regards,
+John Doe
+
+
+🎯 QUICK TEST STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Register Student
+  → Go to: http://localhost:8080/gradhire/register
+  → Select "Student"
+  → Use John Doe's data above
+  → Click Register
+
+Step 2: Login
+  → Email: john.doe@university.edu
+  → Password: Student123!
+
+Step 3: Complete Profile
+  → Add skills: Java, Python, React, MySQL
+  → Upload resume (any PDF)
+  → Save
+
+Step 4: Browse Jobs
+  → Click "Jobs" in navigation
+  → Try filters
+  → View job details
+
+Step 5: Apply to Job
+  → Click "Apply Now"
+  → Paste cover letter (above)
+  → Upload resume
+  → Submit
+
+Step 6: Register Recruiter
+  → Logout
+  → Register with hr@google.com
+  → Select "Admin/Recruiter"
+
+Step 7: Post Job
+  → Login as recruiter
+  → Go to "Post Job"
+  → Fill in Google job details (above)
+  → Add skills: Java, Python, Git
+  → Submit
+
+Step 8: View Dashboard
+  → See posted jobs
+  → View applications
+  → Check analytics
+
+
+🔑 COMMON PASSWORDS (for testing)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+All Students:   Student123!
+All Recruiters: Recruiter123!
+
+
+🔧 POPULAR SKILLS TO TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Frontend:    React, Vue.js, Angular, JavaScript, TypeScript, HTML, CSS
+Backend:     Java, Python, Node.js, Spring Boot, Django, Flask
+Database:    MySQL, PostgreSQL, MongoDB, Redis, SQL
+Cloud:       AWS, Azure, GCP, Docker, Kubernetes
+Data:        Machine Learning, TensorFlow, Pandas, NumPy
+Tools:       Git, Agile, REST APIs, Microservices
+
+
+🌐 YOUR APP URLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Home:        http://localhost:8080/gradhire
+Login:       http://localhost:8080/gradhire/login
+Register:    http://localhost:8080/gradhire/register
+Jobs:        http://localhost:8080/gradhire/jobs
+Dashboard:   http://localhost:8080/gradhire/student/dashboard (after login)
+Admin:       http://localhost:8080/gradhire/admin/dashboard (recruiter only)
+
+
+✅ FEATURES TO TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Student registration
+□ Recruiter registration
+□ Login/Logout
+□ Profile editing
+□ Skills management
+□ Resume upload
+□ Job browsing with filters
+□ Job application
+□ Application status tracking
+□ Smart job recommendations (match %)
+□ Job posting (recruiter)
+□ Application review (recruiter)
+□ Dashboard analytics
+□ Role-based access control (try accessing wrong pages)
+
+
+📖 Full Documentation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+See: SAMPLE_TEST_DATA.md for complete details
+
+
+🎉 Happy Testing!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

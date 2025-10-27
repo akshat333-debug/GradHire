@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GradHire" default="war" basedir=".">
+    
+    <!-- ========================================= -->
+    <!-- PROJECT PROPERTIES -->
+    <!-- ========================================= -->
+    <description>
+        GradHire - Job Portal for College Students
+        Build script for creating deployable WAR file
+    </description>
+    
+    <!-- Load build properties -->
+    <property file="build.properties"/>
+    
+    <!-- Project Information -->
+    <property name="app.name" value="gradhire"/>
+    <property name="app.version" value="1.0"/>
+    <property name="war.name" value="${app.name}.war"/>
+    
+    <!-- Directory Structure -->
+    <property name="src.dir" location="src"/>
+    <property name="web.dir" location="web"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="build.dir" location="build"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="classes.dir" location="${build.dir}/WEB-INF/classes"/>
+    
+    <!-- Tomcat Properties -->
+    <!-- Set default Tomcat location, can be overridden by build.properties or -D command line -->
+    <property file="build.properties"/>
+    <property environment="env"/>
+    <condition property="tomcat.home" value="${env.CATALINA_HOME}" else="/Users/agraw/Desktop/apache-tomcat-9.0.111">
+        <isset property="env.CATALINA_HOME"/>
+    </condition>
+    <property name="tomcat.webapps" location="${tomcat.home}/webapps"/>
+    
+    <!-- ========================================= -->
+    <!-- CLASSPATH -->
+    <!-- ========================================= -->
+    <path id="compile.classpath">
+        <!-- Project libraries (includes javax.servlet JARs) -->
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        
+        <!-- WEB-INF/lib JARs -->
+        <fileset dir="${web.dir}/WEB-INF/lib" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <!-- ========================================= -->
+    <!-- TARGETS -->
+    <!-- ========================================= -->
+    
+    <!-- Clean Build -->
+    <target name="clean" description="Remove build and dist directories">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <echo message="Cleaned build and dist directories"/>
+    </target>
+    
+    <!-- Initialize Build -->
+    <target name="init" description="Create build directory structure">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/WEB-INF"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <echo message="Initialized build directories"/>
+    </target>
+    
+    <!-- Compile Java Sources -->
+    <target name="compile" depends="init" description="Compile Java source files">
+        <javac srcdir="${src.dir}" 
+               destdir="${classes.dir}"
+               includeantruntime="false"
+               debug="true"
+               deprecation="true"
+               optimize="true"
+               encoding="UTF-8">
+            <classpath refid="compile.classpath"/>
+        </javac>
+        <echo message="Compiled Java sources successfully"/>
+    </target>
+    
+    <!-- Copy Resources -->
+    <target name="copy-resources" depends="compile" description="Copy web resources">
+        <!-- Copy web content -->
+        <copy todir="${build.dir}">
+            <fileset dir="${web.dir}">
+                <include name="**/*"/>
+                <exclude name="WEB-INF/classes/**"/>
+            </fileset>
+        </copy>
+        
+        <!-- Copy libraries (exclude provided JARs - Tomcat supplies them) -->
+        <copy todir="${build.dir}/WEB-INF/lib">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+                <!-- Exclude servlet/JSP APIs - Tomcat 11 provides these -->
+                <exclude name="javax.servlet-api-*.jar"/>
+                <exclude name="javax.servlet.jsp-api-*.jar"/>
+            </fileset>
+        </copy>
+        
+        <!-- Copy database properties -->
+        <copy file="database.properties" 
+              tofile="${build.dir}/WEB-INF/classes/database.properties"
+              failonerror="true"/>
+        
+        <echo message="Copied web resources and libraries"/>
+    </target>
+    
+    <!-- Create WAR File -->
+    <target name="war" depends="copy-resources" description="Create WAR file for deployment">
+        <war destfile="${dist.dir}/${war.name}" 
+             webxml="${build.dir}/WEB-INF/web.xml">
+            <fileset dir="${build.dir}">
+                <include name="**/*"/>
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+            
+            <!-- Add manifest -->
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Title" value="GradHire"/>
+                <attribute name="Implementation-Version" value="${app.version}"/>
+                <attribute name="Implementation-Vendor" value="GradHire Team"/>
+            </manifest>
+        </war>
+        
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="WAR file created successfully!"/>
+        <echo message="Location: ${dist.dir}/${war.name}"/>
+        <echo message="Size: "/>
+        <echo message="========================================"/>
+        
+        <length file="${dist.dir}/${war.name}" property="war.size"/>
+        <echo message="WAR file size: ${war.size} bytes"/>
+    </target>
+    
+    <!-- Deploy to Local Tomcat -->
+    <target name="deploy" depends="war" description="Deploy WAR to local Tomcat">
+        <copy file="${dist.dir}/${war.name}" 
+              todir="${tomcat.webapps}"
+              overwrite="true"/>
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Deployed to: ${tomcat.webapps}/${war.name}"/>
+        <echo message="Please restart Tomcat to load the application"/>
+        <echo message="========================================"/>
+    </target>
+    
+    <!-- Undeploy from Tomcat -->
+    <target name="undeploy" description="Remove application from Tomcat">
+        <delete file="${tomcat.webapps}/${war.name}"/>
+        <delete dir="${tomcat.webapps}/${app.name}"/>
+        <echo message="Application undeployed from Tomcat"/>
+    </target>
+    
+    <!-- Dist Target (NetBeans compatibility) -->
+    <target name="dist" depends="war" description="Create distribution (NetBeans target)">
+        <echo message="Distribution created: ${dist.dir}/${war.name}"/>
+    </target>
+    
+    <!-- Full Build -->
+    <target name="all" depends="clean,war" description="Clean build and create WAR">
+        <echo message="Full build completed successfully!"/>
+    </target>
+    
+    <!-- Run Target (NetBeans compatibility) -->
+    <target name="run" depends="deploy" description="Build, deploy and run the application">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Application deployed successfully!"/>
+        <echo message=""/>
+        <echo message="Access your application at:"/>
+        <echo message="  http://localhost:8080/${app.name}"/>
+        <echo message=""/>
+        <echo message="Note: Make sure Tomcat is running!"/>
+        <echo message="========================================"/>
+    </target>
+    
+    <!-- Debug Target (NetBeans compatibility) -->
+    <target name="debug" depends="deploy" description="Build, deploy for debugging">
+        <echo message="Application deployed in debug mode"/>
+        <echo message="Attach debugger to Tomcat on port 8000"/>
+    </target>
+    
+    <!-- Display Help -->
+    <target name="help" description="Display available targets">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="GradHire Build Script"/>
+        <echo message="========================================"/>
+        <echo message=""/>
+        <echo message="Available targets:"/>
+        <echo message="  clean          - Remove build and dist directories"/>
+        <echo message="  init           - Create build directory structure"/>
+        <echo message="  compile        - Compile Java source files"/>
+        <echo message="  copy-resources - Copy web resources"/>
+        <echo message="  war            - Create WAR file (default)"/>
+        <echo message="  dist           - Create distribution (same as war)"/>
+        <echo message="  deploy         - Deploy WAR to local Tomcat"/>
+        <echo message="  run            - Build, deploy and run application"/>
+        <echo message="  debug          - Build and deploy for debugging"/>
+        <echo message="  undeploy       - Remove application from Tomcat"/>
+        <echo message="  all            - Clean build and create WAR"/>
+        <echo message="  help           - Display this help message"/>
+        <echo message=""/>
+        <echo message="Usage: ant [target]"/>
+        <echo message="Example: ant war"/>
+        <echo message="========================================"/>
+    </target>
+    
+</project>
+
+
+
