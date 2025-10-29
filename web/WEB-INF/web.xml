@@ -177,6 +177,16 @@
         <url-pattern>/admin/dashboard</url-pattern>
     </servlet-mapping>
     
+    <!-- Admin Analytics Servlet -->
+    <servlet>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.AdminAnalyticsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <url-pattern>/admin/analytics</url-pattern>
+    </servlet-mapping>
+    
     <!-- Profile Servlet -->
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
@@ -234,7 +244,17 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>JobPostServlet</servlet-name>
-        <url-pattern>/admin/post-job</url-pattern>
+        <url-pattern>/admin/jobs/post</url-pattern>
+    </servlet-mapping>
+
+    <!-- Job Draft Servlet -->
+    <servlet>
+        <servlet-name>AdminJobDraftServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.AdminJobDraftServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminJobDraftServlet</servlet-name>
+        <url-pattern>/admin/jobs/save-draft</url-pattern>
     </servlet-mapping>
     
     <!-- ========================================= -->
