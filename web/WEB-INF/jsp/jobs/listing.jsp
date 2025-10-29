@@ -42,9 +42,23 @@
                     <c:choose>
                         <c:when test="${not empty sessionScope.user}">
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/${sessionScope.userType}/dashboard">
-                                    Dashboard
-                                </a>
+                                <c:choose>
+                                    <c:when test="${sessionScope.userType == 'student'}">
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/student/dashboard">
+                                            Dashboard
+                                        </a>
+                                    </c:when>
+                                    <c:when test="${sessionScope.userType == 'employer' or sessionScope.userType == 'admin'}">
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/dashboard">
+                                            Dashboard
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/">
+                                            Dashboard
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link btn btn-outline-danger ms-2" href="${pageContext.request.contextPath}/logout">
@@ -206,7 +220,7 @@
                 <!-- Success Message -->
                 <c:if test="${not empty success}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle"></i> ${success}
+                        <i class="fas fa-check-circle"></i> <c:out value="${success}" />
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </c:if>
@@ -234,15 +248,15 @@
                                             <h4 class="job-title">
                                                 <a href="${pageContext.request.contextPath}/job/${job.jobId}" 
                                                    class="text-decoration-none text-dark">
-                                                    ${job.title}
+                                                    <c:out value="${job.title}" />
                                                 </a>
                                             </h4>
                                             <p class="company-name mb-2">
-                                                <i class="fas fa-building"></i> ${job.company}
+                                                <i class="fas fa-building"></i> <c:out value="${job.company}" />
                                             </p>
                                         </div>
                                         <div>
-                                            <span class="badge badge-job-type bg-primary">${job.jobType}</span>
+                                            <span class="badge badge-job-type bg-primary"><c:out value="${job.jobType}" /></span>
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +264,7 @@
                                 <div class="job-body">
                                     <div class="job-meta mb-3">
                                         <div class="job-meta-item">
-                                            <i class="fas fa-map-marker-alt"></i> ${job.location}
+                                            <i class="fas fa-map-marker-alt"></i> <c:out value="${job.location}" />
                                         </div>
                                         <div class="job-meta-item">
                                             <i class="fas fa-dollar-sign"></i> 
@@ -270,10 +284,10 @@
                                     <p class="text-muted mb-3">
                                         <c:choose>
                                             <c:when test="${job.description != null && job.description.length() > 200}">
-                                                ${job.description.substring(0, 200)}...
+                                                <c:out value="${job.description.substring(0, 200)}" escapeXml="true" />...
                                             </c:when>
                                             <c:when test="${job.description != null}">
-                                                ${job.description}
+                                                <c:out value="${job.description}" escapeXml="true" />
                                             </c:when>
                                             <c:otherwise>
                                                 No description available.
@@ -285,7 +299,7 @@
                                         <div class="mb-3">
                                             <c:forEach items="${job.requiredSkills}" var="skill" varStatus="status">
                                                 <c:if test="${status.index < 5}">
-                                                    <span class="skill-tag">${skill.skillName}</span>
+                                                    <span class="skill-tag"><c:out value="${skill.skillName}" /></span>
                                                 </c:if>
                                             </c:forEach>
                                             <c:if test="${job.requiredSkills.size() > 5}">
@@ -323,7 +337,8 @@
                                                 </c:otherwise>
                                             </c:choose>
                                             <button class="btn btn-outline-secondary ms-2" 
-                                                    onclick="saveJob(${job.jobId})">
+                                                    data-job-id="${job.jobId}"
+                                                    onclick="saveJob(this)">
                                                 <i class="far fa-bookmark"></i>
                                             </button>
                                         </div>
@@ -363,7 +378,10 @@
     <script src="${pageContext.request.contextPath}/js/main.js"></script>
     
     <script>
-        function saveJob(jobId) {
+        function saveJob(button) {
+            // Extract jobId from data attribute
+            const jobId = button.dataset.jobId;
+            
             showLoading();
             
             fetch('${pageContext.request.contextPath}/student/save-job', {
@@ -371,7 +389,7 @@
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'jobId=' + jobId
+                body: 'jobId=' + encodeURIComponent(jobId)
             })
             .then(response => response.json())
             .then(data => {

@@ -253,7 +253,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="github" class="form-label fw-bold">GitHub Profile</label>
                                     <input type="url" class="form-control" id="github" name="github" 
-                                           value="${student.github}" placeholder="https://github.com/yourusername">
+                                           value="${student.githubUrl}" placeholder="https://github.com/yourusername">
                                 </div>
                             </div>
                             

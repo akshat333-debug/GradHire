@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${job.title} - GradHire</title>
+    <title><c:out value="${job.title}" /> - GradHire</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,9 +42,23 @@
                     <c:choose>
                         <c:when test="${not empty sessionScope.user}">
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/${sessionScope.userType}/dashboard">
-                                    Dashboard
-                                </a>
+                                <c:choose>
+                                    <c:when test="${sessionScope.userType == 'student'}">
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/student/dashboard">
+                                            Dashboard
+                                        </a>
+                                    </c:when>
+                                    <c:when test="${sessionScope.userType == 'employer' or sessionScope.userType == 'admin'}">
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/dashboard">
+                                            Dashboard
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/">
+                                            Dashboard
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link btn btn-outline-danger ms-2" href="${pageContext.request.contextPath}/logout">
@@ -67,7 +81,7 @@
     
     <!-- Main Content -->
     <div class="container my-5">
-        <div class="row">
+        <div class="row" data-job-title="<c:out value='${job.title}' />" data-job-company="<c:out value='${job.company}' />">
             <!-- Job Details -->
             <div class="col-lg-8 mb-4">
                 <!-- Job Header Card -->
@@ -75,18 +89,18 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <h1 class="h2 fw-bold mb-2">${job.title}</h1>
+                                <h1 class="h2 fw-bold mb-2"><c:out value="${job.title}" /></h1>
                                 <h5 class="text-primary mb-3">
-                                    <i class="fas fa-building"></i> ${job.company}
+                                    <i class="fas fa-building"></i> <c:out value="${job.company}" />
                                 </h5>
                             </div>
-                            <span class="badge bg-primary fs-6 p-2">${job.jobType}</span>
+                            <span class="badge bg-primary fs-6 p-2"><c:out value="${job.jobType}" /></span>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                <strong>Location:</strong> ${job.location}
+                                <strong>Location:</strong> <c:out value="${job.location}" />
                             </div>
                             <div class="col-md-6 mb-2">
                                 <i class="fas fa-dollar-sign text-primary me-2"></i>
@@ -139,7 +153,7 @@
                                     </a>
                                 </c:when>
                             </c:choose>
-                            <button class="btn btn-outline-secondary btn-lg" onclick="saveJob(${job.jobId})">
+                            <button class="btn btn-outline-secondary btn-lg" data-job-id="${job.jobId}" onclick="saveJob(this)">
                                 <i class="far fa-bookmark"></i> Save
                             </button>
                             <button class="btn btn-outline-secondary btn-lg" onclick="shareJob()">
@@ -154,7 +168,7 @@
                     <div class="card-body p-4">
                         <h4 class="fw-bold mb-3">Job Description</h4>
                         <div class="job-description">
-                            ${job.description}
+                            <c:out value="${job.description}" escapeXml="true" />
                         </div>
                     </div>
                 </div>
@@ -165,7 +179,7 @@
                         <div class="card-body p-4">
                             <h4 class="fw-bold mb-3">Requirements</h4>
                             <div class="requirements">
-                                ${job.requirements}
+                                <c:out value="${job.requirements}" escapeXml="true" />
                             </div>
                         </div>
                     </div>
@@ -191,7 +205,7 @@
                         <div class="card-body p-4">
                             <h4 class="fw-bold mb-3">Benefits</h4>
                             <div class="benefits">
-                                ${job.benefits}
+                                <c:out value="${job.benefits}" escapeXml="true" />
                             </div>
                         </div>
                     </div>
@@ -203,10 +217,10 @@
                 <!-- Company Info -->
                 <div class="card shadow-sm mb-4 sticky-top" style="top: 100px;">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3">About ${job.company}</h5>
+                        <h5 class="fw-bold mb-3">About <c:out value="${job.company}" /></h5>
                         <div class="mb-3">
                             <p class="text-muted">
-                                ${job.companyDescription != null ? job.companyDescription : 'Leading company in the industry'}
+                                <c:out value="${job.companyDescription != null ? job.companyDescription : 'Leading company in the industry'}" escapeXml="true" />
                             </p>
                         </div>
                         
@@ -228,13 +242,13 @@
                         <c:if test="${not empty job.contactEmail}">
                             <div class="mb-2">
                                 <i class="fas fa-envelope text-primary me-2"></i>
-                                <small>${job.contactEmail}</small>
+                                <small><c:out value="${job.contactEmail}" /></small>
                             </div>
                         </c:if>
                         <c:if test="${not empty job.contactPhone}">
                             <div class="mb-2">
                                 <i class="fas fa-phone text-primary me-2"></i>
-                                <small>${job.contactPhone}</small>
+                                <small><c:out value="${job.contactPhone}" /></small>
                             </div>
                         </c:if>
                     </div>
@@ -250,14 +264,14 @@
                                     <div class="mb-3 pb-3 ${status.last ? '' : 'border-bottom'}">
                                         <a href="${pageContext.request.contextPath}/job/${simJob.jobId}" 
                                            class="text-decoration-none text-dark">
-                                            <h6 class="fw-bold mb-1">${simJob.title}</h6>
+                                            <h6 class="fw-bold mb-1"><c:out value="${simJob.title}" /></h6>
                                         </a>
                                         <small class="text-muted">
-                                            <i class="fas fa-building"></i> ${simJob.company}
+                                            <i class="fas fa-building"></i> <c:out value="${simJob.company}" />
                                         </small>
                                         <br>
                                         <small class="text-muted">
-                                            <i class="fas fa-map-marker-alt"></i> ${simJob.location}
+                                            <i class="fas fa-map-marker-alt"></i> <c:out value="${simJob.location}" />
                                         </small>
                                     </div>
                                 </c:if>
@@ -275,7 +289,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
-                        <i class="fas fa-paper-plane"></i> Apply for ${job.title}
+                        <i class="fas fa-paper-plane"></i> Apply for <c:out value="${job.title}" />
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -367,7 +381,10 @@
             showLoading();
         });
         
-        function saveJob(jobId) {
+        function saveJob(button) {
+            // Extract jobId from data attribute
+            const jobId = button.dataset.jobId;
+            
             showLoading();
             
             fetch('${pageContext.request.contextPath}/student/save-job', {
@@ -375,7 +392,7 @@
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'jobId=' + jobId
+                body: 'jobId=' + encodeURIComponent(jobId)
             })
             .then(response => response.json())
             .then(data => {
@@ -393,8 +410,12 @@
         }
         
         function shareJob() {
+            // Read job title and company from data attributes
+            const row = document.querySelector('div.row[data-job-title]');
+            const jobTitle = row ? row.dataset.jobTitle : 'Job';
+            const jobCompany = row ? row.dataset.jobCompany : 'Company';
+            const title = jobTitle + ' at ' + jobCompany;
             const url = window.location.href;
-            const title = '${job.title} at ${job.company}';
             
             if (navigator.share) {
                 navigator.share({

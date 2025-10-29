@@ -293,6 +293,11 @@ footer a:hover {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 2rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
 }
 
 .dashboard-sidebar .nav-link {

@@ -29,9 +29,7 @@
                 <div class="position-sticky">
                     <div class="text-center text-white py-4">
                         <div class="mb-3">
-                            <img src="${pageContext.request.contextPath}/uploads/profiles/${student.profilePicture != null ? student.profilePicture : 'default-avatar.png'}" 
-                                 alt="Profile" class="rounded-circle" width="80" height="80"
-                                 onerror="this.src='${pageContext.request.contextPath}/images/default-avatar.png'">
+                            <i class="fas fa-user-circle" style="font-size: 80px; line-height: 1;"></i>
                         </div>
                         <h5 class="fw-bold">${student.firstName} ${student.lastName}</h5>
                         <p class="small mb-0">${student.email}</p>

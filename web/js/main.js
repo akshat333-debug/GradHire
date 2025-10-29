@@ -206,7 +206,7 @@ function updateCharCount(inputId, counterId, maxLength) {
 // ============================================
 // Skills Tag Input
 // ============================================
-function initializeSkillTags(inputId, containerI) {
+function initializeSkillTags(inputId, containerId) {
     const input = document.getElementById(inputId);
     const container = document.getElementById(containerId);
     

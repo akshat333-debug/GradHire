@@ -187,6 +187,46 @@
         <url-pattern>/student/profile</url-pattern>
     </servlet-mapping>
     
+    <!-- Student Recommendations Servlet -->
+    <servlet>
+        <servlet-name>StudentRecommendationsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.StudentRecommendationsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentRecommendationsServlet</servlet-name>
+        <url-pattern>/student/recommendations</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Student Applications Servlet -->
+    <servlet>
+        <servlet-name>StudentApplicationsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.StudentApplicationsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentApplicationsServlet</servlet-name>
+        <url-pattern>/student/applications</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Admin Applications Servlet -->
+    <servlet>
+        <servlet-name>AdminApplicationsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.AdminApplicationsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminApplicationsServlet</servlet-name>
+        <url-pattern>/admin/applications</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Admin Candidates Servlet -->
+    <servlet>
+        <servlet-name>AdminCandidatesServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.AdminCandidatesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminCandidatesServlet</servlet-name>
+        <url-pattern>/admin/candidates</url-pattern>
+    </servlet-mapping>
+    
     <!-- Job Post Servlet -->
     <servlet>
         <servlet-name>JobPostServlet</servlet-name>

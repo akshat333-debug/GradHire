@@ -49,7 +49,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/jobs/post">
+                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/post-job">
                                 <i class="fas fa-plus-circle"></i> Post New Job
                             </a>
                         </li>
@@ -197,7 +197,7 @@
                                 </h5>
                                 <div class="row">
                                     <div class="col-md-3 mb-2">
-                                        <a href="${pageContext.request.contextPath}/admin/jobs/post" class="btn btn-primary w-100">
+                                        <a href="${pageContext.request.contextPath}/admin/post-job" class="btn btn-primary w-100">
                                             <i class="fas fa-plus"></i> Post New Job
                                         </a>
                                     </div>
@@ -342,7 +342,7 @@
                                         <div class="text-center py-4">
                                             <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
                                             <p class="text-muted">No active jobs</p>
-                                            <a href="${pageContext.request.contextPath}/admin/jobs/post" class="btn btn-sm btn-primary">
+                                            <a href="${pageContext.request.contextPath}/admin/post-job" class="btn btn-sm btn-primary">
                                                 Post a Job
                                             </a>
                                         </div>
