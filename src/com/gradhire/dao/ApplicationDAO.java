@@ -486,7 +486,7 @@ public class ApplicationDAO {
             throw new IllegalArgumentException("Student ID and Job ID cannot be null");
         }
         
-        String sql = "SELECT EXISTS(SELECT 1 FROM applications WHERE student_id = ? AND job_id = ? AND deleted_at IS NULL)";
+        String sql = "SELECT EXISTS(SELECT 1 FROM applications WHERE student_id = ? AND job_id = ?)";
         
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -723,7 +723,7 @@ public class ApplicationDAO {
                     "SUM(CASE WHEN application_status = ? THEN 1 ELSE 0 END) as shortlisted, " +
                     "SUM(CASE WHEN application_status = ? THEN 1 ELSE 0 END) as accepted, " +
                     "SUM(CASE WHEN application_status = ? THEN 1 ELSE 0 END) as rejected " +
-                    "FROM applications WHERE student_id = ? AND deleted_at IS NULL";
+                    "FROM applications WHERE student_id = ?";
         
         ApplicationStats stats = new ApplicationStats();
         Connection conn = null;

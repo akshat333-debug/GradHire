@@ -57,11 +57,11 @@ public class AdminAnalyticsServlet extends HttpServlet {
             int totalApplications = applicationDAO.getApplicationCountByAdmin(admin.getAdminId());
             stats.put("totalApplications", totalApplications);
 
-            int pending = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "PENDING");
-            int reviewed = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "REVIEWED");
-            int shortlisted = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "SHORTLISTED");
-            int accepted = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "ACCEPTED");
-            int rejected = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "REJECTED");
+            int pending = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "Pending");
+            int reviewed = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "Reviewed");
+            int shortlisted = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "Shortlisted");
+            int accepted = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "Accepted");
+            int rejected = applicationDAO.getApplicationCountByAdminAndStatus(admin.getAdminId(), "Rejected");
 
             stats.put("pending", pending);
             stats.put("reviewed", reviewed);

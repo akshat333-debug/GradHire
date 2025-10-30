@@ -81,17 +81,17 @@ public class AdminDashboardServlet extends HttpServlet {
             
             // Pending review count
             int pendingReview = applicationDAO.getApplicationCountByAdminAndStatus(
-                admin.getAdminId(), "PENDING");
+                admin.getAdminId(), "Pending");
             stats.put("pendingReview", pendingReview);
             
             // Shortlisted count
             int shortlisted = applicationDAO.getApplicationCountByAdminAndStatus(
-                admin.getAdminId(), "SHORTLISTED");
+                admin.getAdminId(), "Shortlisted");
             stats.put("shortlisted", shortlisted);
             
             // Accepted count
             int accepted = applicationDAO.getApplicationCountByAdminAndStatus(
-                admin.getAdminId(), "ACCEPTED");
+                admin.getAdminId(), "Accepted");
             stats.put("accepted", accepted);
             
             // Calculate percentages for progress bars

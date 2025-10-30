@@ -81,6 +81,7 @@ public class JobListingServlet extends HttpServlet {
             
             // Get jobs from database with filters
             List<Job> jobs = jobDAO.findAllActive(JOBS_PER_PAGE, offset);
+            logger.info(String.format("/jobs params -> page=%d offset=%d; jobs.size=%d", currentPage, offset, (jobs != null ? jobs.size() : -1)));
             
             // TODO: Implement filtering in JobDAO
             // For now, we get all active jobs
@@ -88,17 +89,26 @@ public class JobListingServlet extends HttpServlet {
             
             // Get total job count for pagination
             int totalJobs = jobDAO.countActive();
+            logger.info(String.format("/jobs totals -> totalJobs=%d totalPages=%d", totalJobs, (int) Math.ceil((double) totalJobs / JOBS_PER_PAGE)));
             int totalPages = (int) Math.ceil((double) totalJobs / JOBS_PER_PAGE);
             
             // Check if logged in as student
             HttpSession session = request.getSession(false);
             if (session != null && "student".equals(session.getAttribute("userType"))) {
                 Student student = (Student) session.getAttribute("user");
-                
-                // Check which jobs the student has applied to
-                for (Job job : jobs) {
-                    boolean hasApplied = applicationDAO.hasApplied(student.getStudentId(), job.getJobId());
-                    job.setHasApplied(hasApplied);
+                Integer sid = (student != null ? student.getStudentId() : null);
+                logger.info("/jobs student sid=" + sid);
+                if (sid != null) {
+                    // Check which jobs the student has applied to; do not fail the page if one check errors
+                    for (Job job : jobs) {
+                        try {
+                            boolean hasApplied = applicationDAO.hasApplied(sid, job.getJobId());
+                            job.setHasApplied(hasApplied);
+                        } catch (Exception ex) {
+                            logger.log(Level.WARNING, "hasApplied check failed for student=" + sid + ", job=" + job.getJobId(), ex);
+                            job.setHasApplied(false);
+                        }
+                    }
                 }
             }
             

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,7 +228,7 @@
                 
                 <!-- Job Cards -->
                 <c:choose>
-                    <c:when test="${empty jobs}">
+                    <c:when test="${jobs == null or fn:length(jobs) == 0}">
                         <div class="card text-center py-5">
                             <div class="card-body">
                                 <i class="fas fa-search fa-4x text-muted mb-3"></i>
@@ -277,7 +278,7 @@
                                         </div>
                                         <div class="job-meta-item">
                                             <i class="fas fa-clock"></i> 
-                                            Posted <fmt:formatDate value="${job.postedDate}" pattern="MMM dd, yyyy" />
+                                            Posted <fmt:formatDate value="${job.createdAt}" pattern="MMM dd, yyyy" />
                                         </div>
                                     </div>
                                     

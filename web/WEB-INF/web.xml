@@ -247,6 +247,16 @@
         <url-pattern>/admin/candidates</url-pattern>
     </servlet-mapping>
     
+    <!-- Admin Jobs Servlet -->
+    <servlet>
+        <servlet-name>AdminJobsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.AdminJobsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminJobsServlet</servlet-name>
+        <url-pattern>/admin/jobs</url-pattern>
+    </servlet-mapping>
+    
     <!-- Job Post Servlet -->
     <servlet>
         <servlet-name>JobPostServlet</servlet-name>
