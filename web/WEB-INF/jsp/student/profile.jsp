@@ -51,9 +51,9 @@
                                  id="profilePreview"
                                  onerror="this.src='${pageContext.request.contextPath}/images/default-avatar.png'">
                             <button class="btn btn-sm btn-outline-primary" onclick="document.getElementById('profilePictureInput').click()">
-                                <i class="fas fa-camera"></i> Change Photo
+                                <i class="fas fa-image"></i> Change Photo
                             </button>
-                            <input type="file" id="profilePictureInput" class="d-none" accept="image/*" 
+                            <input type="file" id="profilePictureInput" name="profilePicture" class="d-none" accept="image/*" 
                                    onchange="previewImage(this, 'profilePreview')">
                         </div>
                         <h5 class="fw-bold">${student.firstName} ${student.lastName}</h5>

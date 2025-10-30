@@ -141,7 +141,7 @@ public class StudentDAO {
     public boolean updateStudent(Student student) {
         String sql = "UPDATE students SET full_name = ?, phone = ?, college_name = ?, " +
                     "degree = ?, graduation_year = ?, bio = ?, linkedin_url = ?, " +
-                    "github_url = ?, profile_picture = ? WHERE student_id = ?";
+                    "github_url = ?, profile_picture = ?, resume_path = ? WHERE student_id = ?";
         
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -165,7 +165,8 @@ public class StudentDAO {
             pstmt.setString(7, student.getLinkedinUrl());
             pstmt.setString(8, student.getGithubUrl());
             pstmt.setString(9, student.getProfilePicture());
-            pstmt.setInt(10, student.getStudentId());
+            pstmt.setString(10, student.getResumePath());
+            pstmt.setInt(11, student.getStudentId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
