@@ -237,7 +237,6 @@ public class JobDAO {
      */
     public List<Job> findActiveJobs(int limit, int offset) {
         String sql = "SELECT * FROM jobs WHERE job_status = 'Active' " +
-                    "AND application_deadline >= CURDATE() " +
                     "ORDER BY created_at DESC LIMIT ? OFFSET ?";
         
         List<Job> jobs = new ArrayList<>();
