@@ -216,6 +216,16 @@
         <servlet-name>StudentApplicationsServlet</servlet-name>
         <url-pattern>/student/applications</url-pattern>
     </servlet-mapping>
+
+    <!-- Student Settings Servlet -->
+    <servlet>
+        <servlet-name>StudentSettingsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.StudentSettingsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentSettingsServlet</servlet-name>
+        <url-pattern>/student/settings</url-pattern>
+    </servlet-mapping>
     
     <!-- Admin Applications Servlet -->
     <servlet>
