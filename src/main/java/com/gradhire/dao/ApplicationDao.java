@@ -97,7 +97,7 @@ public class ApplicationDao {
 
     public boolean updateApplicationStatus(int applicationId, String status, String reviewerNotes) throws SQLException {
         try (Connection connection = DBConnection.getConnection();
-              PreparedStatement statement = connection.prepareStatement(UPDATE_APPLICATION_STATUS)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_APPLICATION_STATUS)) {
             statement.setString(1, status);
             statement.setString(2, reviewerNotes);
             if (status == null || "Pending".equalsIgnoreCase(status)) {
