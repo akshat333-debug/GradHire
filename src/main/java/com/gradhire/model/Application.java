@@ -6,6 +6,7 @@ public class Application {
     private int applicationId;
     private int jobId;
     private int studentId;
+    private String coverLetter;
     private String applicationStatus;
     private LocalDateTime appliedAt;
 
@@ -31,6 +32,14 @@ public class Application {
 
     public void setStudentId(int studentId) {
         this.studentId = studentId;
+    }
+
+    public String getCoverLetter() {
+        return coverLetter;
+    }
+
+    public void setCoverLetter(String coverLetter) {
+        this.coverLetter = coverLetter;
     }
 
     public String getApplicationStatus() {
