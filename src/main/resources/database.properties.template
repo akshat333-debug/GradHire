@@ -1,0 +1,10 @@
+# Copy this file to a secure local config if needed.
+# Runtime config precedence:
+# 1) Environment variables: GRADHIRE_DB_URL, GRADHIRE_DB_USERNAME, GRADHIRE_DB_PASSWORD, GRADHIRE_DB_DRIVER
+# 2) Java system properties: gradhire.db.url, gradhire.db.username, gradhire.db.password, gradhire.db.driver
+
+# Example values:
+# GRADHIRE_DB_URL=jdbc:mysql://localhost:3306/gradhire_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+# GRADHIRE_DB_USERNAME=root
+# GRADHIRE_DB_PASSWORD=your_password
+# GRADHIRE_DB_DRIVER=com.mysql.cj.jdbc.Driver

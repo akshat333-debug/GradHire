@@ -109,6 +109,46 @@ The schema includes realistic sample data:
 
 ## 🚀 Setup Instructions
 
+### Phase 1 (Runnable Backend Skeleton) - Quick Run
+
+This repository now includes a runnable Java Servlet/JSP scaffold in:
+
+- `pom.xml`
+- `src/main/java`
+- `src/main/webapp`
+
+#### Build
+
+```bash
+cd <project-root>
+mvn clean package
+```
+
+This generates:
+- `target/gradhire.war`
+
+#### Deploy (Tomcat 9+)
+
+1. Copy `target/gradhire.war` to Tomcat `webapps/`
+2. Start Tomcat
+3. Open:
+   - `http://localhost:8080/gradhire/`
+   - `http://localhost:8080/gradhire/health`
+   - `http://localhost:8080/gradhire/auth/login`
+
+#### Database Configuration
+
+Runtime config is read from environment variables or Java system properties:
+
+- `GRADHIRE_DB_URL`
+- `GRADHIRE_DB_USERNAME`
+- `GRADHIRE_DB_PASSWORD`
+- `GRADHIRE_DB_DRIVER`
+
+You can use `src/main/resources/database.properties.template` as reference.
+
+> Note: Phase 1 focuses on scaffold + basic flow wiring. For reliable login with sample accounts, ensure password hashes in DB are valid BCrypt hashes for your chosen test passwords.
+
 ### Prerequisites
 
 - MySQL 8.0 or higher
@@ -342,5 +382,3 @@ For questions or contributions, please refer to the project documentation.
 ---
 
 **Last Updated**: October 24, 2025
-
-
