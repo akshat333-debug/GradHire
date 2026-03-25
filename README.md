@@ -109,9 +109,9 @@ The schema includes realistic sample data:
 
 ## 🚀 Setup Instructions
 
-### Phase 1 (Runnable Backend Skeleton) - Quick Run
+### Phase 5 (JSP Frontend Pages + Core Flows) - Quick Run
 
-This repository now includes a runnable Java Servlet/JSP scaffold in:
+This repository now includes a runnable Java Servlet/JSP app with role-based dashboards in:
 
 - `pom.xml`
 - `src/main/java`
@@ -127,14 +127,40 @@ mvn clean package
 This generates:
 - `target/gradhire.war`
 
-#### Deploy (Tomcat 9+)
+#### Deploy and Run (Tomcat 9+)
 
 1. Copy `target/gradhire.war` to Tomcat `webapps/`
 2. Start Tomcat
 3. Open:
-   - `http://localhost:8080/gradhire/`
-   - `http://localhost:8080/gradhire/health`
-   - `http://localhost:8080/gradhire/auth/login`
+    - `http://localhost:8080/gradhire/`
+    - `http://localhost:8080/gradhire/health`
+    - `http://localhost:8080/gradhire/auth/login`
+
+#### JSP Frontend Flow
+
+After login, `/dashboard` routes by role:
+
+- Student → job browsing + apply + personal application tracking
+- Recruiter → job creation/update + candidate application review
+- Admin → global job management + global application review
+
+Related endpoints in UI flow:
+
+- `/jobs/details?jobId=<id>`
+- `/applications/apply`
+- `/applications/review`
+- `/jobs/manage`
+- `/auth/logout`
+
+#### Test Instructions
+
+From project root:
+
+```bash
+mvn test
+```
+
+DAO integration tests are DB-aware and may execute as no-op when DB connectivity is unavailable in the test environment.
 
 #### Database Configuration
 
@@ -147,7 +173,7 @@ Runtime config is read from environment variables or Java system properties:
 
 You can use `src/main/resources/database.properties.template` as reference.
 
-> Note: Phase 1 focuses on scaffold + basic flow wiring. For reliable login with sample accounts, ensure password hashes in DB are valid BCrypt hashes for your chosen test passwords.
+> Note: For reliable login with sample accounts, ensure password hashes in DB are valid BCrypt hashes for your chosen test passwords.
 
 ### Prerequisites
 
