@@ -60,6 +60,15 @@
         <url-pattern>/applications/apply</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>applicationReviewServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.ApplicationReviewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>applicationReviewServlet</servlet-name>
+        <url-pattern>/applications/review</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

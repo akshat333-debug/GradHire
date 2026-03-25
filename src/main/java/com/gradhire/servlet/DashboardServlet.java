@@ -3,6 +3,7 @@ package com.gradhire.servlet;
 import com.gradhire.dao.ApplicationDao;
 import com.gradhire.dao.JobDao;
 import com.gradhire.model.Application;
+import com.gradhire.model.ApplicationReviewItem;
 import com.gradhire.model.Job;
 import com.gradhire.util.SessionUtil;
 
@@ -49,6 +50,7 @@ public class DashboardServlet extends HttpServlet {
         req.setAttribute("jobs", jobs);
         req.setAttribute("applications", applications);
         req.setAttribute("appliedJobIds", buildAppliedJobIds(applications));
+        req.setAttribute("reviewApplications", loadReviewApplications(req, userType, userId));
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp");
         dispatcher.forward(req, resp);
@@ -85,5 +87,24 @@ public class DashboardServlet extends HttpServlet {
             appliedJobIds.add(application.getJobId());
         }
         return appliedJobIds;
+    }
+
+    private List<ApplicationReviewItem> loadReviewApplications(HttpServletRequest req, String userType, Integer userId) {
+        if (userType == null || userId == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            if ("admin".equalsIgnoreCase(userType)) {
+                return applicationDao.findReviewItemsForSuperAdmin();
+            }
+            if ("recruiter".equalsIgnoreCase(userType)) {
+                return applicationDao.findReviewItemsForAdmin(userId);
+            }
+            return Collections.emptyList();
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load applications for review due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
     }
 }

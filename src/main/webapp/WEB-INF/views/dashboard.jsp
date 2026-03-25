@@ -2,6 +2,7 @@
 <%@ page import="java.util.Set" %>
 <%@ page import="com.gradhire.model.Job" %>
 <%@ page import="com.gradhire.model.Application" %>
+<%@ page import="com.gradhire.model.ApplicationReviewItem" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -16,6 +17,8 @@
         .error { color: #b00020; margin-bottom: 1rem; }
         .success { color: #0f5132; margin-bottom: 1rem; }
         form.inline { display: inline; }
+        textarea { width: 100%; box-sizing: border-box; }
+        select, button { margin-top: .5rem; }
     </style>
 </head>
 <body>
@@ -71,6 +74,7 @@
     </div>
 
     <div class="column">
+        <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
         <h2>Your Applications</h2>
         <%
             List<Application> applications = (List<Application>) request.getAttribute("applications");
@@ -87,6 +91,39 @@
             <p>Applied At: <%= application.getAppliedAt() %></p>
         </div>
         <% } } %>
+        <% } else { %>
+        <h2>Applications to Review</h2>
+        <%
+            List<ApplicationReviewItem> reviewApplications = (List<ApplicationReviewItem>) request.getAttribute("reviewApplications");
+            if (reviewApplications == null || reviewApplications.isEmpty()) {
+        %>
+        <p>No applications to review.</p>
+        <% } else {
+            for (ApplicationReviewItem item : reviewApplications) {
+        %>
+        <div class="card">
+            <p>Application ID: <%= item.getApplicationId() %></p>
+            <p>Job: <strong><%= item.getJobTitle() %></strong> (ID: <%= item.getJobId() %>)</p>
+            <p>Candidate: <%= item.getStudentName() %> (ID: <%= item.getStudentId() %>)</p>
+            <p>Current Status: <strong><%= item.getApplicationStatus() %></strong></p>
+            <p>Applied At: <%= item.getAppliedAt() %></p>
+            <form method="post" action="${pageContext.request.contextPath}/applications/review">
+                <input type="hidden" name="applicationId" value="<%= item.getApplicationId() %>">
+                <label>Status</label>
+                <select name="status" required>
+                    <option value="Pending" <%= "Pending".equals(item.getApplicationStatus()) ? "selected" : "" %>>Pending</option>
+                    <option value="Reviewed" <%= "Reviewed".equals(item.getApplicationStatus()) ? "selected" : "" %>>Reviewed</option>
+                    <option value="Shortlisted" <%= "Shortlisted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Shortlisted</option>
+                    <option value="Rejected" <%= "Rejected".equals(item.getApplicationStatus()) ? "selected" : "" %>>Rejected</option>
+                    <option value="Accepted" <%= "Accepted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Accepted</option>
+                </select>
+                <label>Reviewer Notes (optional)</label>
+                <textarea name="reviewerNotes" rows="3"></textarea>
+                <button type="submit">Update Status</button>
+            </form>
+        </div>
+        <% } } %>
+        <% } %>
     </div>
 </div>
 </body>

@@ -1,6 +1,7 @@
 package com.gradhire.dao;
 
 import com.gradhire.model.Application;
+import com.gradhire.model.ApplicationReviewItem;
 import com.gradhire.model.Job;
 import com.gradhire.model.Student;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JobAndApplicationDaoIntegrationTest {
@@ -89,5 +91,69 @@ class JobAndApplicationDaoIntegrationTest {
         Optional<Application> updatedApplication = APPLICATION_DAO.findByJobAndStudent(jobId, studentId);
         assertTrue(updatedApplication.isPresent());
         assertEquals("Reviewed", updatedApplication.get().getApplicationStatus());
+    }
+
+    @Test
+    void recruiterCanReviewOwnApplicationsButNotOthers() throws SQLException {
+        String suffix = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        int recruiterA = ADMIN_DAO.createAdmin(
+                "recruitera+" + suffix + "@example.com",
+                "$2a$10$abcdefghijklmnopqrstuv123456789012345678901234567890",
+                "Recruiter A",
+                "Company A " + suffix,
+                "recruiter"
+        );
+        int recruiterB = ADMIN_DAO.createAdmin(
+                "recruiterb+" + suffix + "@example.com",
+                "$2a$10$abcdefghijklmnopqrstuv123456789012345678901234567890",
+                "Recruiter B",
+                "Company B " + suffix,
+                "recruiter"
+        );
+        int studentId = STUDENT_DAO.createStudent(
+                "reviewstudent+" + suffix + "@example.com",
+                "$2a$10$abcdefghijklmnopqrstuv123456789012345678901234567890",
+                "Review Student",
+                "Review College"
+        );
+
+        int jobId = JOB_DAO.createJob(
+                recruiterA,
+                "Review Job " + suffix,
+                "Company A " + suffix,
+                "Internship",
+                "QA",
+                "Review flow job description",
+                "Remote",
+                LocalDate.now().plusDays(10),
+                "Active"
+        );
+
+        assertTrue(APPLICATION_DAO.applyToJob(jobId, studentId, "Review letter " + suffix));
+        Optional<Application> application = APPLICATION_DAO.findByJobAndStudent(jobId, studentId);
+        assertTrue(application.isPresent());
+
+        boolean reviewerBCanUpdate = APPLICATION_DAO.updateApplicationStatusForAdmin(
+                application.get().getApplicationId(),
+                "Shortlisted",
+                "Should fail for non-owner recruiter",
+                recruiterB
+        );
+        assertFalse(reviewerBCanUpdate);
+
+        boolean reviewerACanUpdate = APPLICATION_DAO.updateApplicationStatusForAdmin(
+                application.get().getApplicationId(),
+                "Shortlisted",
+                "Looks promising",
+                recruiterA
+        );
+        assertTrue(reviewerACanUpdate);
+
+        Optional<Application> updated = APPLICATION_DAO.findByJobAndStudent(jobId, studentId);
+        assertTrue(updated.isPresent());
+        assertEquals("Shortlisted", updated.get().getApplicationStatus());
+
+        var reviewItems = APPLICATION_DAO.findReviewItemsForAdmin(recruiterA);
+        assertTrue(reviewItems.stream().map(ApplicationReviewItem::getApplicationId).anyMatch(id -> id == application.get().getApplicationId()));
     }
 }
