@@ -89,6 +89,12 @@
             <p>Job ID: <%= application.getJobId() %></p>
             <p>Status: <strong><%= application.getApplicationStatus() %></strong></p>
             <p>Applied At: <%= application.getAppliedAt() %></p>
+            <% if (application.getReviewedAt() != null) { %>
+            <p>Reviewed At: <%= application.getReviewedAt() %></p>
+            <% } %>
+            <% if (application.getReviewerNotes() != null && !application.getReviewerNotes().trim().isEmpty()) { %>
+            <p>Reviewer Notes: <%= application.getReviewerNotes() %></p>
+            <% } %>
         </div>
         <% } } %>
         <% } else { %>
