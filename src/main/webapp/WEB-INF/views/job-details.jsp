@@ -51,7 +51,7 @@
         <% } else { %>
         <form method="post" action="${pageContext.request.contextPath}/applications/apply">
             <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
-            <label for="coverLetter">Cover letter (optional)</label>
+            <label for="coverLetter">Cover Letter (optional)</label>
             <textarea id="coverLetter" name="coverLetter" rows="5"></textarea>
             <div class="actions">
                 <button type="submit">Apply Now</button>

@@ -30,9 +30,9 @@ public class JobDetailsServlet extends HttpServlet {
         try {
             jobId = Integer.parseInt(req.getParameter("jobId"));
             if (jobId <= 0) {
-                throw new NumberFormatException("jobId must be positive.");
+                throw new NumberFormatException();
             }
-        } catch (NumberFormatException exception) {
+        } catch (NumberFormatException nfe) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid job ID.");
             return;
         }
@@ -65,7 +65,7 @@ public class JobDetailsServlet extends HttpServlet {
             } else {
                 req.setAttribute("alreadyApplied", false);
             }
-        } catch (SQLException exception) {
+        } catch (SQLException sqlException) {
             req.setAttribute("jobDetailsError", "Unable to load job details due to a database error. Please refresh and try again.");
         }
 
