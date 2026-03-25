@@ -58,6 +58,7 @@
             <p><%= job.getCompanyName() %> | <%= job.getJobType() %></p>
             <p><%= job.getDomain() %> | <%= job.getLocation() %></p>
             <p>Deadline: <%= job.getApplicationDeadline() %></p>
+            <p><a href="${pageContext.request.contextPath}/jobs/details?jobId=<%= job.getJobId() %>">View Details</a></p>
             <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
             <% boolean alreadyApplied = appliedJobIds != null && appliedJobIds.contains(job.getJobId()); %>
             <% if (alreadyApplied) { %>
