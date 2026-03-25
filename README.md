@@ -113,14 +113,14 @@ The schema includes realistic sample data:
 
 This repository now includes a runnable Java Servlet/JSP scaffold in:
 
-- `/home/runner/work/GradHire/GradHire/pom.xml`
-- `/home/runner/work/GradHire/GradHire/src/main/java`
-- `/home/runner/work/GradHire/GradHire/src/main/webapp`
+- `pom.xml`
+- `src/main/java`
+- `src/main/webapp`
 
 #### Build
 
 ```bash
-cd /home/runner/work/GradHire/GradHire
+cd <project-root>
 mvn clean package
 ```
 
@@ -145,7 +145,7 @@ Runtime config is read from environment variables or Java system properties:
 - `GRADHIRE_DB_PASSWORD`
 - `GRADHIRE_DB_DRIVER`
 
-You can use `/home/runner/work/GradHire/GradHire/src/main/resources/database.properties.template` as reference.
+You can use `src/main/resources/database.properties.template` as reference.
 
 > Note: Phase 1 focuses on scaffold + basic flow wiring. For reliable login with sample accounts, ensure password hashes in DB are valid BCrypt hashes for your chosen test passwords.
 
@@ -382,4 +382,3 @@ For questions or contributions, please refer to the project documentation.
 ---
 
 **Last Updated**: October 24, 2025
-
