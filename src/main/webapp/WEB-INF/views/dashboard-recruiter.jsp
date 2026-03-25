@@ -162,8 +162,10 @@
             for (ActivityLog log : activityLogs) {
         %>
         <div class="card">
-            <p><strong><%= log.getActivityType() %></strong> - <%= log.getCreatedAt() %></p>
-            <p><%= log.getActivityDescription() %></p>
+            <% pageContext.setAttribute("activityType", log.getActivityType()); %>
+            <% pageContext.setAttribute("activityDesc", log.getActivityDescription()); %>
+            <p><strong>${fn:escapeXml(activityType)}</strong> - <%= log.getCreatedAt() %></p>
+            <p>${fn:escapeXml(activityDesc)}</p>
         </div>
         <% } } %>
     </div>

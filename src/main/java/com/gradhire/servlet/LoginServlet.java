@@ -47,9 +47,11 @@ public class LoginServlet extends HttpServlet {
 
             AuthResult user = authResult.get();
             HttpSession session = req.getSession(true);
+            req.changeSessionId();
             session.setAttribute(SessionUtil.USER_ID, user.getUserId());
             session.setAttribute(SessionUtil.USER_TYPE, user.getUserType());
             session.setAttribute(SessionUtil.USER_NAME, user.getFullName());
+            session.setMaxInactiveInterval(30 * 60);
             try {
                 activityLogDao.logActivity(user.getUserType(), user.getUserId(), "login", "User logged in successfully.", req.getRemoteAddr(), req.getHeader("User-Agent"));
             } catch (SQLException ignored) {

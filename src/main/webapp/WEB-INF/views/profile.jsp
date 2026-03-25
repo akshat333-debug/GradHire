@@ -39,7 +39,8 @@
         <% pageContext.setAttribute("studentCollegeName", student.getCollegeName() == null ? "" : student.getCollegeName()); %>
         <form method="post" action="${pageContext.request.contextPath}/profile">
             <label>Email</label>
-            <input type="email" value="<%= student.getEmail() %>" disabled>
+            <% pageContext.setAttribute("studentEmail", student.getEmail()); %>
+            <input type="email" value="${fn:escapeXml(studentEmail)}" disabled>
             <label>Full Name</label>
             <input type="text" name="fullName" value="${fn:escapeXml(studentFullName)}" maxlength="150" required>
             <label>College Name</label>
@@ -54,7 +55,8 @@
         <% pageContext.setAttribute("adminCompanyName", admin.getCompanyName() == null ? "" : admin.getCompanyName()); %>
         <form method="post" action="${pageContext.request.contextPath}/profile">
             <label>Email</label>
-            <input type="email" value="<%= admin.getEmail() %>" disabled>
+            <% pageContext.setAttribute("adminEmail", admin.getEmail()); %>
+            <input type="email" value="${fn:escapeXml(adminEmail)}" disabled>
             <label>Full Name</label>
             <input type="text" name="fullName" value="${fn:escapeXml(adminFullName)}" maxlength="150" required>
             <label>Company Name</label>

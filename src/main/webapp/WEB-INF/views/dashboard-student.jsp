@@ -92,8 +92,11 @@
             for (Job recJob : recommendedJobs) {
         %>
         <div class="card">
-            <h3><%= recJob.getJobTitle() %></h3>
-            <p><%= recJob.getCompanyName() %> | <%= recJob.getDomain() %></p>
+            <% pageContext.setAttribute("recJobTitle", recJob.getJobTitle()); %>
+            <% pageContext.setAttribute("recCompany", recJob.getCompanyName()); %>
+            <% pageContext.setAttribute("recDomain", recJob.getDomain()); %>
+            <h3>${fn:escapeXml(recJobTitle)}</h3>
+            <p>${fn:escapeXml(recCompany)} | ${fn:escapeXml(recDomain)}</p>
             <p><a href="${pageContext.request.contextPath}/jobs/details?jobId=<%= recJob.getJobId() %>">View Details</a></p>
         </div>
         <% } } %>
@@ -108,7 +111,9 @@
             for (Job savedJob : savedJobs) {
         %>
         <div class="card">
-            <p><strong><%= savedJob.getJobTitle() %></strong> (<%= savedJob.getCompanyName() %>)</p>
+            <% pageContext.setAttribute("savedJobTitle", savedJob.getJobTitle()); %>
+            <% pageContext.setAttribute("savedCompany", savedJob.getCompanyName()); %>
+            <p><strong>${fn:escapeXml(savedJobTitle)}</strong> (${fn:escapeXml(savedCompany)})</p>
             <form class="inline" method="post" action="${pageContext.request.contextPath}/jobs/saved">
                 <input type="hidden" name="jobId" value="<%= savedJob.getJobId() %>">
                 <input type="hidden" name="action" value="unsave">
@@ -151,8 +156,10 @@
             for (ActivityLog log : activityLogs) {
         %>
         <div class="card">
-            <p><strong><%= log.getActivityType() %></strong> - <%= log.getCreatedAt() %></p>
-            <p><%= log.getActivityDescription() %></p>
+            <% pageContext.setAttribute("activityType", log.getActivityType()); %>
+            <% pageContext.setAttribute("activityDesc", log.getActivityDescription()); %>
+            <p><strong>${fn:escapeXml(activityType)}</strong> - <%= log.getCreatedAt() %></p>
+            <p>${fn:escapeXml(activityDesc)}</p>
         </div>
         <% } } %>
     </div>

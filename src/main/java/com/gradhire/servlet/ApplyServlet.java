@@ -14,6 +14,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLException;
 
 public class ApplyServlet extends HttpServlet {
+    private static final int COVER_LETTER_MAX_LENGTH = 5000;
     private final ApplicationDao applicationDao = new ApplicationDao();
     private final JobDao jobDao = new JobDao();
     private final ActivityLogDao activityLogDao = new ActivityLogDao();
@@ -34,6 +35,11 @@ public class ApplyServlet extends HttpServlet {
 
         String jobIdRaw = req.getParameter("jobId");
         String coverLetter = normalize(req.getParameter("coverLetter"));
+        if (coverLetter != null && coverLetter.length() > COVER_LETTER_MAX_LENGTH) {
+            req.getSession().setAttribute("applicationError", "Cover letter exceeds the allowed length.");
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            return;
+        }
         int jobId;
         try {
             jobId = Integer.parseInt(jobIdRaw);

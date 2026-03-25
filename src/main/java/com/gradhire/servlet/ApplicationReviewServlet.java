@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class ApplicationReviewServlet extends HttpServlet {
     private static final Set<String> ALLOWED_STATUSES = Set.of("Pending", "Reviewed", "Shortlisted", "Rejected", "Accepted");
+    private static final int REVIEWER_NOTES_MAX_LENGTH = 5000;
     private final ApplicationDao applicationDao = new ApplicationDao();
     private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
@@ -46,6 +47,10 @@ public class ApplicationReviewServlet extends HttpServlet {
 
         String status = normalize(req.getParameter("status"));
         String reviewerNotes = normalize(req.getParameter("reviewerNotes"));
+        if (reviewerNotes != null && reviewerNotes.length() > REVIEWER_NOTES_MAX_LENGTH) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Reviewer notes exceed allowed length.");
+            return;
+        }
         if (status == null || !ALLOWED_STATUSES.contains(status)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid application status.");
             return;
