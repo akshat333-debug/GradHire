@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class ApplicationDao {
             "FROM applications WHERE job_id = ? AND student_id = ?";
     private static final String EXISTS_BY_JOB_AND_STUDENT =
             "SELECT 1 FROM applications WHERE job_id = ? AND student_id = ?";
+    private static final String UPDATE_APPLICATION_STATUS =
+            "UPDATE applications SET application_status = ?, reviewer_notes = ?, reviewed_at = ? WHERE application_id = ?";
 
     public List<Application> findByStudentId(int studentId) throws SQLException {
         List<Application> applications = new ArrayList<>();
@@ -67,6 +70,21 @@ public class ApplicationDao {
             statement.setInt(1, jobId);
             statement.setInt(2, studentId);
             statement.setString(3, coverLetter);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    public boolean updateApplicationStatus(int applicationId, String status, String reviewerNotes) throws SQLException {
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_APPLICATION_STATUS)) {
+            statement.setString(1, status);
+            statement.setString(2, reviewerNotes);
+            if (status == null || "Pending".equalsIgnoreCase(status)) {
+                statement.setNull(3, Types.TIMESTAMP);
+            } else {
+                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            }
+            statement.setInt(4, applicationId);
             return statement.executeUpdate() == 1;
         }
     }
