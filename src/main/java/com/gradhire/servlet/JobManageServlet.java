@@ -17,7 +17,11 @@ import java.util.Set;
 public class JobManageServlet extends HttpServlet {
     private static final Set<String> ALLOWED_JOB_TYPES = Set.of("Internship", "Full-time", "Part-time", "Contract");
     private static final Set<String> ALLOWED_JOB_STATUS = Set.of("Active", "Closed", "Draft");
-    private static final int FIELD_MAX_LENGTH = 255;
+    private static final int JOB_TITLE_MAX_LENGTH = 200;
+    private static final int COMPANY_NAME_MAX_LENGTH = 150;
+    private static final int DOMAIN_MAX_LENGTH = 100;
+    private static final int LOCATION_MAX_LENGTH = 150;
+    private static final int DESCRIPTION_MAX_LENGTH = 65535;
     private final JobDao jobDao = new JobDao();
 
     @Override
@@ -55,11 +59,14 @@ public class JobManageServlet extends HttpServlet {
             return;
         }
         if (!ALLOWED_JOB_STATUS.contains(jobStatus)) {
-            session.setAttribute("jobManageError", "Invalid job type or status.");
+            session.setAttribute("jobManageError", "Invalid job status.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }
-        if (isTooLong(jobTitle) || isTooLong(companyName) || isTooLong(jobType) || isTooLong(domain) || isTooLong(location) || isTooLong(jobStatus)) {
+        if (isTooLong(jobTitle, JOB_TITLE_MAX_LENGTH)
+                || isTooLong(companyName, COMPANY_NAME_MAX_LENGTH)
+                || isTooLong(domain, DOMAIN_MAX_LENGTH)
+                || isTooLong(location, LOCATION_MAX_LENGTH)) {
             session.setAttribute("jobManageError", "One or more fields exceed the allowed length.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
@@ -68,7 +75,7 @@ public class JobManageServlet extends HttpServlet {
         LocalDate deadline;
         try {
             deadline = parseDate(req.getParameter("applicationDeadline"));
-        } catch (DateTimeParseException dateTimeParseException) {
+        } catch (DateTimeParseException dtpe) {
             session.setAttribute("jobManageError", "Invalid application deadline format.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
@@ -78,6 +85,11 @@ public class JobManageServlet extends HttpServlet {
             if ("create".equalsIgnoreCase(action)) {
                 if (companyName == null || jobType == null || description == null) {
                     session.setAttribute("jobManageError", "Company, job type, and description are required for creating a job.");
+                    resp.sendRedirect(req.getContextPath() + "/dashboard");
+                    return;
+                }
+                if (isTooLong(description, DESCRIPTION_MAX_LENGTH)) {
+                    session.setAttribute("jobManageError", "Description exceeds the allowed length.");
                     resp.sendRedirect(req.getContextPath() + "/dashboard");
                     return;
                 }
@@ -115,7 +127,7 @@ public class JobManageServlet extends HttpServlet {
                 if ("admin".equalsIgnoreCase(userType)) {
                     updated = jobDao.updateJobBasic(jobId, jobTitle, domain, location, deadline, jobStatus);
                 } else {
-                    updated = jobDao.updateJobBasicForAdmin(jobId, jobTitle, domain, location, deadline, jobStatus, adminId);
+                    updated = jobDao.updateJobBasicWithOwnerCheck(jobId, jobTitle, domain, location, deadline, jobStatus, adminId);
                 }
                 if (updated) {
                     session.setAttribute("jobManageSuccess", "Job updated successfully.");
@@ -146,7 +158,7 @@ public class JobManageServlet extends HttpServlet {
         return LocalDate.parse(normalized);
     }
 
-    private boolean isTooLong(String value) {
-        return value != null && value.length() > FIELD_MAX_LENGTH;
+    private boolean isTooLong(String value, int maxLength) {
+        return value != null && value.length() > maxLength;
     }
 }

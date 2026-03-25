@@ -150,19 +150,23 @@
         <% } else {
             for (Job managedJob : managedJobs) {
         %>
+        <% pageContext.setAttribute("managedJobTitle", managedJob.getJobTitle()); %>
+        <% pageContext.setAttribute("managedJobDomain", managedJob.getDomain() == null ? "" : managedJob.getDomain()); %>
+        <% pageContext.setAttribute("managedJobLocation", managedJob.getLocation() == null ? "" : managedJob.getLocation()); %>
+        <% pageContext.setAttribute("managedJobDeadline", managedJob.getApplicationDeadline()); %>
         <div class="card">
             <p>Job ID: <strong><%= managedJob.getJobId() %></strong></p>
             <form method="post" action="${pageContext.request.contextPath}/jobs/manage">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="jobId" value="<%= managedJob.getJobId() %>">
                 <label>Job Title</label>
-                <input type="text" name="jobTitle" maxlength="200" value="<%= managedJob.getJobTitle() %>" required>
+                <input type="text" name="jobTitle" maxlength="200" value="${fn:escapeXml(managedJobTitle)}" required>
                 <label>Domain</label>
-                <input type="text" name="domain" maxlength="100" value="<%= managedJob.getDomain() == null ? "" : managedJob.getDomain() %>">
+                <input type="text" name="domain" maxlength="100" value="${fn:escapeXml(managedJobDomain)}">
                 <label>Location</label>
-                <input type="text" name="location" maxlength="150" value="<%= managedJob.getLocation() == null ? "" : managedJob.getLocation() %>">
+                <input type="text" name="location" maxlength="150" value="${fn:escapeXml(managedJobLocation)}">
                 <label>Application Deadline</label>
-                <input type="date" name="applicationDeadline" value="<%= managedJob.getApplicationDeadline() == null ? "" : managedJob.getApplicationDeadline() %>">
+                <input type="date" name="applicationDeadline" value="${managedJobDeadline}">
                 <label>Status</label>
                 <select name="jobStatus" required>
                     <option value="Active" <%= "Active".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Active</option>
