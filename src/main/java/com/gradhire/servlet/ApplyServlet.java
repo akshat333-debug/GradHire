@@ -41,7 +41,7 @@ public class ApplyServlet extends HttpServlet {
             applicationDao.applyToJob(jobId, studentId, coverLetter);
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (SQLException exception) {
-            req.getSession().setAttribute("applicationError", "Could not submit application.");
+            req.getSession().setAttribute("applicationError", "Unable to submit application due to a database error. Please try again.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         }
     }

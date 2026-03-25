@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (SQLException exception) {
-            req.setAttribute("error", "Login failed due to a server error.");
+            req.setAttribute("error", "Login is temporarily unavailable due to a system error. Please try again.");
             doGet(req, resp);
         }
     }

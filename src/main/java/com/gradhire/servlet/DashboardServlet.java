@@ -48,7 +48,7 @@ public class DashboardServlet extends HttpServlet {
         try {
             return jobDao.findActiveJobs(10);
         } catch (SQLException exception) {
-            req.setAttribute("dashboardError", "Unable to load jobs.");
+            req.setAttribute("dashboardError", "Unable to load jobs due to a database error. Please refresh and try again.");
             return Collections.emptyList();
         }
     }
@@ -61,7 +61,7 @@ public class DashboardServlet extends HttpServlet {
         try {
             return applicationDao.findByStudentId(userId);
         } catch (SQLException exception) {
-            req.setAttribute("dashboardError", "Unable to load applications.");
+            req.setAttribute("dashboardError", "Unable to load your applications due to a database error. Please refresh and try again.");
             return Collections.emptyList();
         }
     }
