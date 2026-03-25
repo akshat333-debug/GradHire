@@ -14,11 +14,13 @@ public final class DBConnection {
 
     public static Connection getConnection() throws SQLException {
         ensureDriverLoaded();
-        return DriverManager.getConnection(
+        Connection connection = DriverManager.getConnection(
                 DatabaseConfig.getUrl(),
                 DatabaseConfig.getUsername(),
                 DatabaseConfig.getPassword()
         );
+        connection.setAutoCommit(true);
+        return connection;
     }
 
     private static void ensureDriverLoaded() {
