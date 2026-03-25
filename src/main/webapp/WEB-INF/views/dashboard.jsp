@@ -4,6 +4,7 @@
 <%@ page import="com.gradhire.model.Application" %>
 <%@ page import="com.gradhire.model.ApplicationReviewItem" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +20,7 @@
         form.inline { display: inline; }
         textarea { width: 100%; box-sizing: border-box; }
         select, button { margin-top: .5rem; }
+        .reviewer-notes { white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -93,7 +95,8 @@
             <p>Reviewed At: <%= application.getReviewedAt() %></p>
             <% } %>
             <% if (application.getReviewerNotes() != null && !application.getReviewerNotes().trim().isEmpty()) { %>
-            <p>Reviewer Notes: <%= application.getReviewerNotes() %></p>
+            <% pageContext.setAttribute("reviewerNotes", application.getReviewerNotes()); %>
+            <p class="reviewer-notes">Reviewer Notes: ${fn:escapeXml(reviewerNotes)}</p>
             <% } %>
         </div>
         <% } } %>
