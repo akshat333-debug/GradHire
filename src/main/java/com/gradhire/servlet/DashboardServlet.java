@@ -3,6 +3,7 @@ package com.gradhire.servlet;
 import com.gradhire.dao.ApplicationDao;
 import com.gradhire.dao.JobDao;
 import com.gradhire.model.Application;
+import com.gradhire.model.ApplicationReviewItem;
 import com.gradhire.model.Job;
 import com.gradhire.util.SessionUtil;
 
@@ -15,7 +16,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DashboardServlet extends HttpServlet {
     private final JobDao jobDao = new JobDao();
@@ -36,9 +39,18 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("applicationError", applyError);
             session.removeAttribute("applicationError");
         }
+        Object applySuccess = session.getAttribute("applicationSuccess");
+        if (applySuccess != null) {
+            req.setAttribute("applicationSuccess", applySuccess);
+            session.removeAttribute("applicationSuccess");
+        }
 
-        req.setAttribute("jobs", loadJobs(req));
-        req.setAttribute("applications", loadApplications(req, userType, userId));
+        List<Job> jobs = loadJobs(req);
+        List<Application> applications = loadApplications(req, userType, userId);
+        req.setAttribute("jobs", jobs);
+        req.setAttribute("applications", applications);
+        req.setAttribute("appliedJobIds", buildAppliedJobIds(applications));
+        req.setAttribute("reviewApplications", loadReviewApplications(req, userType, userId));
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp");
         dispatcher.forward(req, resp);
@@ -62,6 +74,36 @@ public class DashboardServlet extends HttpServlet {
             return applicationDao.findByStudentId(userId);
         } catch (SQLException exception) {
             req.setAttribute("dashboardError", "Unable to load your applications due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
+    }
+
+    private Set<Integer> buildAppliedJobIds(List<Application> applications) {
+        if (applications == null || applications.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<Integer> appliedJobIds = new HashSet<>();
+        for (Application application : applications) {
+            appliedJobIds.add(application.getJobId());
+        }
+        return appliedJobIds;
+    }
+
+    private List<ApplicationReviewItem> loadReviewApplications(HttpServletRequest req, String userType, Integer userId) {
+        if (userType == null || userId == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            if ("admin".equalsIgnoreCase(userType)) {
+                return applicationDao.findReviewItemsForSuperAdmin();
+            }
+            if ("recruiter".equalsIgnoreCase(userType)) {
+                return applicationDao.findReviewItemsForAdmin(userId);
+            }
+            return Collections.emptyList();
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load applications for review due to a database error. Please refresh and try again.");
             return Collections.emptyList();
         }
     }

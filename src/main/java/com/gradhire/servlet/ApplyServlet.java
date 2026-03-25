@@ -1,6 +1,7 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.ApplicationDao;
+import com.gradhire.dao.JobDao;
 import com.gradhire.util.SessionUtil;
 
 import javax.servlet.ServletException;
@@ -8,10 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLException;
 
 public class ApplyServlet extends HttpServlet {
     private final ApplicationDao applicationDao = new ApplicationDao();
+    private final JobDao jobDao = new JobDao();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,21 +31,49 @@ public class ApplyServlet extends HttpServlet {
         }
 
         String jobIdRaw = req.getParameter("jobId");
-        String coverLetter = req.getParameter("coverLetter");
+        String coverLetter = normalize(req.getParameter("coverLetter"));
         int jobId;
         try {
             jobId = Integer.parseInt(jobIdRaw);
+            if (jobId <= 0) {
+                throw new NumberFormatException("jobId must be positive.");
+            }
         } catch (NumberFormatException exception) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid job ID.");
             return;
         }
 
         try {
+            if (!jobDao.isActiveAndOpen(jobId)) {
+                req.getSession().setAttribute("applicationError", "This job is not available for applications.");
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
+                return;
+            }
+
+            if (applicationDao.hasApplied(jobId, studentId)) {
+                req.getSession().setAttribute("applicationError", "You have already applied for this job.");
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
+                return;
+            }
+
             applicationDao.applyToJob(jobId, studentId, coverLetter);
+            req.getSession().setAttribute("applicationSuccess", "Application submitted successfully.");
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+        } catch (SQLIntegrityConstraintViolationException exception) {
+            req.getSession().setAttribute("applicationError", "You have already applied for this job.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (SQLException exception) {
             req.getSession().setAttribute("applicationError", "Unable to submit application due to a database error. Please try again.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         }
+    }
+
+    private String normalize(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
