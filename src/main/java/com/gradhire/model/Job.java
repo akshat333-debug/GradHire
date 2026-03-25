@@ -4,12 +4,15 @@ import java.time.LocalDate;
 
 public class Job {
     private int jobId;
+    private int adminId;
     private String jobTitle;
     private String companyName;
     private String jobType;
     private String domain;
+    private String description;
     private String location;
     private LocalDate applicationDeadline;
+    private String jobStatus;
 
     public int getJobId() {
         return jobId;
@@ -17,6 +20,14 @@ public class Job {
 
     public void setJobId(int jobId) {
         this.jobId = jobId;
+    }
+
+    public int getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(int adminId) {
+        this.adminId = adminId;
     }
 
     public String getJobTitle() {
@@ -51,6 +62,14 @@ public class Job {
         this.domain = domain;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -65,5 +84,13 @@ public class Job {
 
     public void setApplicationDeadline(LocalDate applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 }

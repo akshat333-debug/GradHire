@@ -4,6 +4,7 @@
 <%@ page import="com.gradhire.model.Application" %>
 <%@ page import="com.gradhire.model.ApplicationReviewItem" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +20,7 @@
         form.inline { display: inline; }
         textarea { width: 100%; box-sizing: border-box; }
         select, button { margin-top: .5rem; }
+        .reviewer-notes { white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -33,6 +35,12 @@
 <% } %>
 <% if (request.getAttribute("applicationSuccess") != null) { %>
 <div class="success"><%= request.getAttribute("applicationSuccess") %></div>
+<% } %>
+<% if (request.getAttribute("jobManageError") != null) { %>
+<div class="error"><%= request.getAttribute("jobManageError") %></div>
+<% } %>
+<% if (request.getAttribute("jobManageSuccess") != null) { %>
+<div class="success"><%= request.getAttribute("jobManageSuccess") %></div>
 <% } %>
 
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
@@ -56,6 +64,7 @@
             <p><%= job.getCompanyName() %> | <%= job.getJobType() %></p>
             <p><%= job.getDomain() %> | <%= job.getLocation() %></p>
             <p>Deadline: <%= job.getApplicationDeadline() %></p>
+            <p><a href="${pageContext.request.contextPath}/jobs/details?jobId=<%= job.getJobId() %>">View Details</a></p>
             <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
             <% boolean alreadyApplied = appliedJobIds != null && appliedJobIds.contains(job.getJobId()); %>
             <% if (alreadyApplied) { %>
@@ -89,9 +98,86 @@
             <p>Job ID: <%= application.getJobId() %></p>
             <p>Status: <strong><%= application.getApplicationStatus() %></strong></p>
             <p>Applied At: <%= application.getAppliedAt() %></p>
+            <% if (application.getReviewedAt() != null) { %>
+            <p>Reviewed At: <%= application.getReviewedAt() %></p>
+            <% } %>
+            <% if (application.getReviewerNotes() != null && !application.getReviewerNotes().trim().isEmpty()) { %>
+            <% pageContext.setAttribute("reviewerNotes", application.getReviewerNotes()); %>
+            <p class="reviewer-notes">Reviewer Notes: ${fn:escapeXml(reviewerNotes)}</p>
+            <% } %>
         </div>
         <% } } %>
         <% } else { %>
+        <h2>Post a Job</h2>
+        <div class="card">
+            <form method="post" action="${pageContext.request.contextPath}/jobs/manage">
+                <input type="hidden" name="action" value="create">
+                <label>Job Title</label>
+                <input type="text" name="jobTitle" maxlength="200" required>
+                <label>Company Name</label>
+                <input type="text" name="companyName" maxlength="150" required>
+                <label>Job Type</label>
+                <select name="jobType" required>
+                    <option value="Internship">Internship</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Contract">Contract</option>
+                </select>
+                <label>Domain</label>
+                <input type="text" name="domain" maxlength="100">
+                <label>Description</label>
+                <textarea name="description" rows="4" required></textarea>
+                <label>Location</label>
+                <input type="text" name="location" maxlength="150">
+                <label>Application Deadline</label>
+                <input type="date" name="applicationDeadline">
+                <label>Job Status</label>
+                <select name="jobStatus" required>
+                    <option value="Active">Active</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <button type="submit">Create Job</button>
+            </form>
+        </div>
+
+        <h2>Manage Your Jobs</h2>
+        <%
+            List<Job> managedJobs = (List<Job>) request.getAttribute("managedJobs");
+            if (managedJobs == null || managedJobs.isEmpty()) {
+        %>
+        <p>No jobs posted yet.</p>
+        <% } else {
+            for (Job managedJob : managedJobs) {
+        %>
+        <% pageContext.setAttribute("managedJobTitle", managedJob.getJobTitle()); %>
+        <% pageContext.setAttribute("managedJobDomain", managedJob.getDomain() == null ? "" : managedJob.getDomain()); %>
+        <% pageContext.setAttribute("managedJobLocation", managedJob.getLocation() == null ? "" : managedJob.getLocation()); %>
+        <% pageContext.setAttribute("managedJobDeadline", managedJob.getApplicationDeadline()); %>
+        <div class="card">
+            <p>Job ID: <strong><%= managedJob.getJobId() %></strong></p>
+            <form method="post" action="${pageContext.request.contextPath}/jobs/manage">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="jobId" value="<%= managedJob.getJobId() %>">
+                <label>Job Title</label>
+                <input type="text" name="jobTitle" maxlength="200" value="${fn:escapeXml(managedJobTitle)}" required>
+                <label>Domain</label>
+                <input type="text" name="domain" maxlength="100" value="${fn:escapeXml(managedJobDomain)}">
+                <label>Location</label>
+                <input type="text" name="location" maxlength="150" value="${fn:escapeXml(managedJobLocation)}">
+                <label>Application Deadline</label>
+                <input type="date" name="applicationDeadline" value="${managedJobDeadline}">
+                <label>Status</label>
+                <select name="jobStatus" required>
+                    <option value="Active" <%= "Active".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Active</option>
+                    <option value="Draft" <%= "Draft".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Draft</option>
+                    <option value="Closed" <%= "Closed".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Closed</option>
+                </select>
+                <button type="submit">Update Job</button>
+            </form>
+        </div>
+        <% } } %>
+
         <h2>Applications to Review</h2>
         <%
             List<ApplicationReviewItem> reviewApplications = (List<ApplicationReviewItem>) request.getAttribute("reviewApplications");

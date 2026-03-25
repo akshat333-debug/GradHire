@@ -7,22 +7,31 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class JobDao {
     private static final String FIND_ACTIVE = "SELECT job_id, job_title, company_name, job_type, domain, location, application_deadline FROM jobs WHERE job_status = 'Active' AND application_deadline >= CURDATE() ORDER BY created_at DESC LIMIT ?";
-    private static final String FIND_BY_ID = "SELECT job_id, job_title, company_name, job_type, domain, location, application_deadline FROM jobs WHERE job_id = ?";
+    private static final String FIND_BY_ID = "SELECT job_id, admin_id, job_title, company_name, job_type, domain, description, location, application_deadline, job_status FROM jobs WHERE job_id = ?";
     private static final String EXISTS_ACTIVE = "SELECT 1 FROM jobs WHERE job_id = ? AND job_status = 'Active' AND application_deadline >= CURDATE()";
     private static final String INSERT_JOB =
             "INSERT INTO jobs (admin_id, job_title, company_name, job_type, domain, description, location, application_deadline, job_status) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_JOB_BASIC =
             "UPDATE jobs SET job_title = ?, domain = ?, location = ?, application_deadline = ?, job_status = ? WHERE job_id = ?";
+    private static final String UPDATE_JOB_BASIC_WITH_OWNER_CHECK =
+            "UPDATE jobs SET job_title = ?, domain = ?, location = ?, application_deadline = ?, job_status = ? WHERE job_id = ? AND admin_id = ?";
+    private static final String FIND_BY_ADMIN =
+            "SELECT job_id, admin_id, job_title, company_name, job_type, domain, description, location, application_deadline, job_status " +
+            "FROM jobs WHERE admin_id = ? ORDER BY created_at DESC LIMIT ?";
 
     public List<Job> findActiveJobs(int limit) throws SQLException {
         List<Job> jobs = new ArrayList<>();
@@ -30,8 +39,9 @@ public class JobDao {
              PreparedStatement statement = connection.prepareStatement(FIND_ACTIVE)) {
             statement.setInt(1, limit);
             try (ResultSet resultSet = statement.executeQuery()) {
+                Set<String> columnNames = readColumnNames(resultSet);
                 while (resultSet.next()) {
-                    jobs.add(mapJob(resultSet));
+                    jobs.add(mapJob(resultSet, columnNames));
                 }
             }
         }
@@ -43,10 +53,11 @@ public class JobDao {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setInt(1, jobId);
             try (ResultSet resultSet = statement.executeQuery()) {
+                Set<String> columnNames = readColumnNames(resultSet);
                 if (!resultSet.next()) {
                     return Optional.empty();
                 }
-                return Optional.of(mapJob(resultSet));
+                return Optional.of(mapJob(resultSet, columnNames));
             }
         }
     }
@@ -117,18 +128,71 @@ public class JobDao {
         }
     }
 
-    private Job mapJob(ResultSet resultSet) throws SQLException {
+    public boolean updateJobBasicWithOwnerCheck(int jobId, String jobTitle, String domain, String location, LocalDate applicationDeadline, String jobStatus, int adminId) throws SQLException {
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_JOB_BASIC_WITH_OWNER_CHECK)) {
+            statement.setString(1, jobTitle);
+            statement.setString(2, domain);
+            statement.setString(3, location);
+            if (applicationDeadline != null) {
+                statement.setDate(4, Date.valueOf(applicationDeadline));
+            } else {
+                statement.setDate(4, null);
+            }
+            statement.setString(5, jobStatus);
+            statement.setInt(6, jobId);
+            statement.setInt(7, adminId);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    public List<Job> findByAdminId(int adminId, int limit) throws SQLException {
+        List<Job> jobs = new ArrayList<>();
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ADMIN)) {
+            statement.setInt(1, adminId);
+            statement.setInt(2, limit);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                Set<String> columnNames = readColumnNames(resultSet);
+                while (resultSet.next()) {
+                    jobs.add(mapJob(resultSet, columnNames));
+                }
+            }
+        }
+        return jobs;
+    }
+
+    private Job mapJob(ResultSet resultSet, Set<String> columnNames) throws SQLException {
         Job job = new Job();
         job.setJobId(resultSet.getInt("job_id"));
+        if (columnNames.contains("admin_id")) {
+            job.setAdminId(resultSet.getInt("admin_id"));
+        }
         job.setJobTitle(resultSet.getString("job_title"));
         job.setCompanyName(resultSet.getString("company_name"));
         job.setJobType(resultSet.getString("job_type"));
         job.setDomain(resultSet.getString("domain"));
+        if (columnNames.contains("description")) {
+            job.setDescription(resultSet.getString("description"));
+        }
         job.setLocation(resultSet.getString("location"));
         Date applicationDeadline = resultSet.getDate("application_deadline");
         if (applicationDeadline != null) {
             job.setApplicationDeadline(applicationDeadline.toLocalDate());
         }
+        if (columnNames.contains("job_status")) {
+            job.setJobStatus(resultSet.getString("job_status"));
+        }
         return job;
+    }
+
+    private Set<String> readColumnNames(ResultSet resultSet) throws SQLException {
+        Set<String> columnNames = new HashSet<>();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        for (int index = 1; index <= columnCount; index++) {
+            columnNames.add(metaData.getColumnLabel(index).toLowerCase(Locale.ROOT));
+        }
+        return columnNames;
     }
 }

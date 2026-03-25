@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApplicationDao {
-    private static final String FIND_BY_STUDENT = "SELECT application_id, job_id, student_id, cover_letter, application_status, applied_at FROM applications WHERE student_id = ? ORDER BY applied_at DESC";
+    private static final String FIND_BY_STUDENT = "SELECT application_id, job_id, student_id, cover_letter, application_status, applied_at, reviewed_at, reviewer_notes FROM applications WHERE student_id = ? ORDER BY applied_at DESC";
     private static final String FIND_BY_JOB_AND_STUDENT =
-            "SELECT application_id, job_id, student_id, cover_letter, application_status, applied_at " +
+            "SELECT application_id, job_id, student_id, cover_letter, application_status, applied_at, reviewed_at, reviewer_notes " +
             "FROM applications WHERE job_id = ? AND student_id = ?";
     private static final String EXISTS_BY_JOB_AND_STUDENT =
             "SELECT 1 FROM applications WHERE job_id = ? AND student_id = ?";
@@ -163,6 +163,10 @@ public class ApplicationDao {
         Timestamp appliedAtTs = resultSet.getTimestamp("applied_at");
         LocalDateTime appliedAt = appliedAtTs != null ? appliedAtTs.toLocalDateTime() : null;
         application.setAppliedAt(appliedAt);
+        Timestamp reviewedAtTs = resultSet.getTimestamp("reviewed_at");
+        LocalDateTime reviewedAt = reviewedAtTs != null ? reviewedAtTs.toLocalDateTime() : null;
+        application.setReviewedAt(reviewedAt);
+        application.setReviewerNotes(resultSet.getString("reviewer_notes"));
         return application;
     }
 

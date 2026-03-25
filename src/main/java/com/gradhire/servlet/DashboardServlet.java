@@ -44,6 +44,16 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("applicationSuccess", applySuccess);
             session.removeAttribute("applicationSuccess");
         }
+        Object jobManageError = session.getAttribute("jobManageError");
+        if (jobManageError != null) {
+            req.setAttribute("jobManageError", jobManageError);
+            session.removeAttribute("jobManageError");
+        }
+        Object jobManageSuccess = session.getAttribute("jobManageSuccess");
+        if (jobManageSuccess != null) {
+            req.setAttribute("jobManageSuccess", jobManageSuccess);
+            session.removeAttribute("jobManageSuccess");
+        }
 
         List<Job> jobs = loadJobs(req);
         List<Application> applications = loadApplications(req, userType, userId);
@@ -51,6 +61,7 @@ public class DashboardServlet extends HttpServlet {
         req.setAttribute("applications", applications);
         req.setAttribute("appliedJobIds", buildAppliedJobIds(applications));
         req.setAttribute("reviewApplications", loadReviewApplications(req, userType, userId));
+        req.setAttribute("managedJobs", loadManagedJobs(req, userType, userId));
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp");
         dispatcher.forward(req, resp);
@@ -104,6 +115,18 @@ public class DashboardServlet extends HttpServlet {
             return Collections.emptyList();
         } catch (SQLException exception) {
             req.setAttribute("dashboardError", "Unable to load applications for review due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
+    }
+
+    private List<Job> loadManagedJobs(HttpServletRequest req, String userType, Integer userId) {
+        if (userType == null || userId == null || (!"admin".equalsIgnoreCase(userType) && !"recruiter".equalsIgnoreCase(userType))) {
+            return Collections.emptyList();
+        }
+        try {
+            return jobDao.findByAdminId(userId, 50);
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load your managed jobs due to a database error. Please refresh and try again.");
             return Collections.emptyList();
         }
     }

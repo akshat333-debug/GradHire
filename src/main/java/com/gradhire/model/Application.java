@@ -9,6 +9,8 @@ public class Application {
     private String coverLetter;
     private String applicationStatus;
     private LocalDateTime appliedAt;
+    private LocalDateTime reviewedAt;
+    private String reviewerNotes;
 
     public int getApplicationId() {
         return applicationId;
@@ -56,5 +58,21 @@ public class Application {
 
     public void setAppliedAt(LocalDateTime appliedAt) {
         this.appliedAt = appliedAt;
+    }
+
+    public LocalDateTime getReviewedAt() {
+        return reviewedAt;
+    }
+
+    public void setReviewedAt(LocalDateTime reviewedAt) {
+        this.reviewedAt = reviewedAt;
+    }
+
+    public String getReviewerNotes() {
+        return reviewerNotes;
+    }
+
+    public void setReviewerNotes(String reviewerNotes) {
+        this.reviewerNotes = reviewerNotes;
     }
 }
