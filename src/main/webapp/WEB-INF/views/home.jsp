@@ -14,13 +14,14 @@
 <body>
 <div class="container">
     <h1>GradHire</h1>
-    <p>Phase 1 runnable backend skeleton is active.</p>
+    <p>Phase 5 JSP frontend pages are active with role-based dashboards.</p>
     <div class="card">
         <p><strong>Available endpoints:</strong></p>
         <ul>
             <li><code>/health</code></li>
             <li><code>/auth/login</code></li>
             <li><code>/dashboard</code> (after login)</li>
+            <li><code>/jobs/details?jobId=&lt;id&gt;</code> (after login)</li>
         </ul>
         <a class="button" href="${pageContext.request.contextPath}/auth/login">Go to Login</a>
     </div>

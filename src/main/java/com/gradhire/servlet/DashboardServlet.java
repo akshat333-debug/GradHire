@@ -63,8 +63,21 @@ public class DashboardServlet extends HttpServlet {
         req.setAttribute("reviewApplications", loadReviewApplications(req, userType, userId));
         req.setAttribute("managedJobs", loadManagedJobs(req, userType, userId));
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher(resolveDashboardView(userType));
         dispatcher.forward(req, resp);
+    }
+
+    private String resolveDashboardView(String userType) {
+        if ("student".equalsIgnoreCase(userType)) {
+            return "/WEB-INF/views/dashboard-student.jsp";
+        }
+        if ("recruiter".equalsIgnoreCase(userType)) {
+            return "/WEB-INF/views/dashboard-recruiter.jsp";
+        }
+        if ("admin".equalsIgnoreCase(userType)) {
+            return "/WEB-INF/views/dashboard-admin.jsp";
+        }
+        return "/WEB-INF/views/dashboard.jsp";
     }
 
     private List<Job> loadJobs(HttpServletRequest req) {
