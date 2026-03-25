@@ -1,6 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.gradhire.model.Job" %>
 <%@ page import="com.gradhire.model.ApplicationReviewItem" %>
+<%@ page import="com.gradhire.model.ActivityLog" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
@@ -43,6 +44,7 @@
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
     <button type="submit">Logout</button>
 </form>
+<a href="${pageContext.request.contextPath}/profile">Manage Profile</a>
 
 <div class="row">
     <div class="column">
@@ -147,6 +149,21 @@
                 <textarea name="reviewerNotes" rows="3"></textarea>
                 <button type="submit">Update Status</button>
             </form>
+        </div>
+        <% } } %>
+
+        <h2>Recent Activity</h2>
+        <%
+            List<ActivityLog> activityLogs = (List<ActivityLog>) request.getAttribute("activityLogs");
+            if (activityLogs == null || activityLogs.isEmpty()) {
+        %>
+        <p>No recent activity.</p>
+        <% } else {
+            for (ActivityLog log : activityLogs) {
+        %>
+        <div class="card">
+            <p><strong><%= log.getActivityType() %></strong> - <%= log.getCreatedAt() %></p>
+            <p><%= log.getActivityDescription() %></p>
         </div>
         <% } } %>
     </div>

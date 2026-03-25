@@ -1,6 +1,7 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.JobDao;
+import com.gradhire.dao.ActivityLogDao;
 import com.gradhire.util.SessionUtil;
 
 import javax.servlet.ServletException;
@@ -23,6 +24,7 @@ public class JobManageServlet extends HttpServlet {
     private static final int LOCATION_MAX_LENGTH = 150;
     private static final int DESCRIPTION_MAX_LENGTH = 65535;
     private final JobDao jobDao = new JobDao();
+    private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -109,6 +111,11 @@ public class JobManageServlet extends HttpServlet {
                         deadline,
                         jobStatus
                 );
+                try {
+                    activityLogDao.logActivity(userType, adminId, "job_create", "Created job ID: " + createdJobId, req.getRemoteAddr(), req.getHeader("User-Agent"));
+                } catch (SQLException ignored) {
+                    // Non-blocking audit log.
+                }
                 session.setAttribute("jobManageSuccess", "Job created successfully (ID: " + createdJobId + ").");
             } else {
                 int jobId;
@@ -130,6 +137,11 @@ public class JobManageServlet extends HttpServlet {
                     updated = jobDao.updateJobBasicWithOwnerCheck(jobId, jobTitle, domain, location, deadline, jobStatus, adminId);
                 }
                 if (updated) {
+                    try {
+                        activityLogDao.logActivity(userType, adminId, "job_update", "Updated job ID: " + jobId, req.getRemoteAddr(), req.getHeader("User-Agent"));
+                    } catch (SQLException ignored) {
+                        // Non-blocking audit log.
+                    }
                     session.setAttribute("jobManageSuccess", "Job updated successfully.");
                 } else {
                     session.setAttribute("jobManageError", "Job not found or not accessible for update.");

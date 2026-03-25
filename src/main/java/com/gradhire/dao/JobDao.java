@@ -32,6 +32,9 @@ public class JobDao {
     private static final String FIND_BY_ADMIN =
             "SELECT job_id, admin_id, job_title, company_name, job_type, domain, description, location, application_deadline, job_status " +
             "FROM jobs WHERE admin_id = ? ORDER BY created_at DESC LIMIT ?";
+    private static final String FIND_ALL_LIMITED =
+            "SELECT job_id, admin_id, job_title, company_name, job_type, domain, description, location, application_deadline, job_status " +
+                    "FROM jobs ORDER BY created_at DESC LIMIT ?";
 
     public List<Job> findActiveJobs(int limit) throws SQLException {
         List<Job> jobs = new ArrayList<>();
@@ -152,6 +155,21 @@ public class JobDao {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ADMIN)) {
             statement.setInt(1, adminId);
             statement.setInt(2, limit);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                Set<String> columnNames = readColumnNames(resultSet);
+                while (resultSet.next()) {
+                    jobs.add(mapJob(resultSet, columnNames));
+                }
+            }
+        }
+        return jobs;
+    }
+
+    public List<Job> findAllLimited(int limit) throws SQLException {
+        List<Job> jobs = new ArrayList<>();
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_ALL_LIMITED)) {
+            statement.setInt(1, limit);
             try (ResultSet resultSet = statement.executeQuery()) {
                 Set<String> columnNames = readColumnNames(resultSet);
                 while (resultSet.next()) {

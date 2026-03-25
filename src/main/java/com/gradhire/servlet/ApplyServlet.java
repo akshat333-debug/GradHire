@@ -1,6 +1,7 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.ApplicationDao;
+import com.gradhire.dao.ActivityLogDao;
 import com.gradhire.dao.JobDao;
 import com.gradhire.util.SessionUtil;
 
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 public class ApplyServlet extends HttpServlet {
     private final ApplicationDao applicationDao = new ApplicationDao();
     private final JobDao jobDao = new JobDao();
+    private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -57,6 +59,11 @@ public class ApplyServlet extends HttpServlet {
             }
 
             applicationDao.applyToJob(jobId, studentId, coverLetter);
+            try {
+                activityLogDao.logActivity("student", studentId, "application", "Applied to job ID: " + jobId, req.getRemoteAddr(), req.getHeader("User-Agent"));
+            } catch (SQLException ignored) {
+                // Non-blocking audit log.
+            }
             req.getSession().setAttribute("applicationSuccess", "Application submitted successfully.");
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (SQLIntegrityConstraintViolationException exception) {

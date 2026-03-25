@@ -1,6 +1,7 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.AuthDao;
+import com.gradhire.dao.ActivityLogDao;
 import com.gradhire.model.AuthResult;
 import com.gradhire.util.SessionUtil;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 public class LoginServlet extends HttpServlet {
     private final AuthDao authDao = new AuthDao();
+    private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -48,6 +50,11 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute(SessionUtil.USER_ID, user.getUserId());
             session.setAttribute(SessionUtil.USER_TYPE, user.getUserType());
             session.setAttribute(SessionUtil.USER_NAME, user.getFullName());
+            try {
+                activityLogDao.logActivity(user.getUserType(), user.getUserId(), "login", "User logged in successfully.", req.getRemoteAddr(), req.getHeader("User-Agent"));
+            } catch (SQLException ignored) {
+                // Non-blocking audit log.
+            }
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (SQLException exception) {

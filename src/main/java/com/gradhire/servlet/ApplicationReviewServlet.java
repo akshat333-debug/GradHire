@@ -1,6 +1,7 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.ApplicationDao;
+import com.gradhire.dao.ActivityLogDao;
 import com.gradhire.util.SessionUtil;
 
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import java.util.Set;
 public class ApplicationReviewServlet extends HttpServlet {
     private static final Set<String> ALLOWED_STATUSES = Set.of("Pending", "Reviewed", "Shortlisted", "Rejected", "Accepted");
     private final ApplicationDao applicationDao = new ApplicationDao();
+    private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -58,6 +60,11 @@ public class ApplicationReviewServlet extends HttpServlet {
             }
             if (updated) {
                 session.setAttribute("applicationSuccess", "Application status updated successfully.");
+                try {
+                    activityLogDao.logActivity(userType, userId, "application_review", "Updated application ID " + applicationId + " to status " + status, req.getRemoteAddr(), req.getHeader("User-Agent"));
+                } catch (SQLException ignored) {
+                    // Non-blocking audit log.
+                }
             } else {
                 session.setAttribute("applicationError", "Application not found or not accessible.");
             }

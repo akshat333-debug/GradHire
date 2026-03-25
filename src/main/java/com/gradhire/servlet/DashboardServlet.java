@@ -1,7 +1,11 @@
 package com.gradhire.servlet;
 
 import com.gradhire.dao.ApplicationDao;
+import com.gradhire.dao.ActivityLogDao;
 import com.gradhire.dao.JobDao;
+import com.gradhire.dao.RecommendationDao;
+import com.gradhire.dao.SavedJobDao;
+import com.gradhire.model.ActivityLog;
 import com.gradhire.model.Application;
 import com.gradhire.model.ApplicationReviewItem;
 import com.gradhire.model.Job;
@@ -23,6 +27,9 @@ import java.util.Set;
 public class DashboardServlet extends HttpServlet {
     private final JobDao jobDao = new JobDao();
     private final ApplicationDao applicationDao = new ApplicationDao();
+    private final RecommendationDao recommendationDao = new RecommendationDao();
+    private final SavedJobDao savedJobDao = new SavedJobDao();
+    private final ActivityLogDao activityLogDao = new ActivityLogDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -62,6 +69,10 @@ public class DashboardServlet extends HttpServlet {
         req.setAttribute("appliedJobIds", buildAppliedJobIds(applications));
         req.setAttribute("reviewApplications", loadReviewApplications(req, userType, userId));
         req.setAttribute("managedJobs", loadManagedJobs(req, userType, userId));
+        req.setAttribute("recommendedJobs", loadRecommendations(req, userType, userId));
+        req.setAttribute("savedJobs", loadSavedJobs(req, userType, userId));
+        req.setAttribute("savedJobIds", buildSavedJobIds(req, userType, userId));
+        req.setAttribute("activityLogs", loadActivityLogs(req, userType, userId));
 
         RequestDispatcher dispatcher = req.getRequestDispatcher(resolveDashboardView(userType));
         dispatcher.forward(req, resp);
@@ -137,9 +148,65 @@ public class DashboardServlet extends HttpServlet {
             return Collections.emptyList();
         }
         try {
+            if ("admin".equalsIgnoreCase(userType)) {
+                return jobDao.findAllLimited(100);
+            }
             return jobDao.findByAdminId(userId, 50);
         } catch (SQLException exception) {
             req.setAttribute("dashboardError", "Unable to load your managed jobs due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
+    }
+
+    private List<Job> loadRecommendations(HttpServletRequest req, String userType, Integer userId) {
+        if (!"student".equalsIgnoreCase(userType) || userId == null) {
+            return Collections.emptyList();
+        }
+        try {
+            return recommendationDao.findRecommendationsForStudent(userId, 10);
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load recommendations due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
+    }
+
+    private List<Job> loadSavedJobs(HttpServletRequest req, String userType, Integer userId) {
+        if (!"student".equalsIgnoreCase(userType) || userId == null) {
+            return Collections.emptyList();
+        }
+        try {
+            return savedJobDao.findSavedJobsByStudentId(userId, 20);
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load saved jobs due to a database error. Please refresh and try again.");
+            return Collections.emptyList();
+        }
+    }
+
+    private Set<Integer> buildSavedJobIds(HttpServletRequest req, String userType, Integer userId) {
+        if (!"student".equalsIgnoreCase(userType) || userId == null) {
+            return Collections.emptySet();
+        }
+        try {
+            List<Job> savedJobs = savedJobDao.findSavedJobsByStudentId(userId, 100);
+            Set<Integer> savedIds = new HashSet<>();
+            for (Job job : savedJobs) {
+                savedIds.add(job.getJobId());
+            }
+            return savedIds;
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load saved jobs due to a database error. Please refresh and try again.");
+            return Collections.emptySet();
+        }
+    }
+
+    private List<ActivityLog> loadActivityLogs(HttpServletRequest req, String userType, Integer userId) {
+        if (userType == null || userId == null) {
+            return Collections.emptyList();
+        }
+        try {
+            return activityLogDao.findRecentByUser(userType, userId, 20);
+        } catch (SQLException exception) {
+            req.setAttribute("dashboardError", "Unable to load activity logs due to a database error. Please refresh and try again.");
             return Collections.emptyList();
         }
     }
