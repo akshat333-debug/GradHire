@@ -23,6 +23,9 @@
 <% if (request.getAttribute("dashboardError") != null) { %>
 <div class="error"><%= request.getAttribute("dashboardError") %></div>
 <% } %>
+<% if (request.getAttribute("applicationError") != null) { %>
+<div class="error"><%= request.getAttribute("applicationError") %></div>
+<% } %>
 
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
     <button type="submit">Logout</button>

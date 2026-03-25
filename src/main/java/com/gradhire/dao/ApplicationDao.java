@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,9 @@ public class ApplicationDao {
                     application.setJobId(resultSet.getInt("job_id"));
                     application.setStudentId(resultSet.getInt("student_id"));
                     application.setApplicationStatus(resultSet.getString("application_status"));
-                    application.setAppliedAt(resultSet.getTimestamp("applied_at").toLocalDateTime());
+                    Timestamp appliedAtTs = resultSet.getTimestamp("applied_at");
+                    LocalDateTime appliedAt = appliedAtTs != null ? appliedAtTs.toLocalDateTime() : null;
+                    application.setAppliedAt(appliedAt);
                     applications.add(application);
                 }
             }

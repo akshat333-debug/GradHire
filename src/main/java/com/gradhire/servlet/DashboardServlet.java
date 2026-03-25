@@ -31,6 +31,11 @@ public class DashboardServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
         String userType = (String) session.getAttribute(SessionUtil.USER_TYPE);
         Integer userId = (Integer) session.getAttribute(SessionUtil.USER_ID);
+        Object applyError = session.getAttribute("applicationError");
+        if (applyError != null) {
+            req.setAttribute("applicationError", applyError);
+            session.removeAttribute("applicationError");
+        }
 
         req.setAttribute("jobs", loadJobs(req));
         req.setAttribute("applications", loadApplications(req, userType, userId));
