@@ -1,4 +1,5 @@
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%@ page import="com.gradhire.model.Job" %>
 <%@ page import="com.gradhire.model.Application" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -13,6 +14,7 @@
         .column { flex: 1; }
         .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
         .error { color: #b00020; margin-bottom: 1rem; }
+        .success { color: #0f5132; margin-bottom: 1rem; }
         form.inline { display: inline; }
     </style>
 </head>
@@ -26,6 +28,9 @@
 <% if (request.getAttribute("applicationError") != null) { %>
 <div class="error"><%= request.getAttribute("applicationError") %></div>
 <% } %>
+<% if (request.getAttribute("applicationSuccess") != null) { %>
+<div class="success"><%= request.getAttribute("applicationSuccess") %></div>
+<% } %>
 
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
     <button type="submit">Logout</button>
@@ -36,6 +41,7 @@
         <h2>Active Jobs</h2>
         <%
             List<Job> jobs = (List<Job>) request.getAttribute("jobs");
+            Set<Integer> appliedJobIds = (Set<Integer>) request.getAttribute("appliedJobIds");
             if (jobs == null || jobs.isEmpty()) {
         %>
         <p>No jobs available.</p>
@@ -46,13 +52,19 @@
             <h3><%= job.getJobTitle() %></h3>
             <p><%= job.getCompanyName() %> | <%= job.getJobType() %></p>
             <p><%= job.getDomain() %> | <%= job.getLocation() %></p>
+            <p>Deadline: <%= job.getApplicationDeadline() %></p>
             <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
+            <% boolean alreadyApplied = appliedJobIds != null && appliedJobIds.contains(job.getJobId()); %>
+            <% if (alreadyApplied) { %>
+            <p><strong>Already applied</strong></p>
+            <% } else { %>
             <form method="post" action="${pageContext.request.contextPath}/applications/apply">
                 <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
                 <label>Cover letter (optional)</label>
                 <textarea name="coverLetter" rows="3"></textarea>
                 <button type="submit">Apply</button>
             </form>
+            <% } %>
             <% } %>
         </div>
         <% } } %>
