@@ -38,8 +38,8 @@ public class JobDetailsServlet extends HttpServlet {
         }
 
         HttpSession session = req.getSession(false);
-        String userType = session != null ? (String) session.getAttribute(SessionUtil.USER_TYPE) : null;
-        Integer userId = session != null ? (Integer) session.getAttribute(SessionUtil.USER_ID) : null;
+        String userType = (String) session.getAttribute(SessionUtil.USER_TYPE);
+        Integer userId = (Integer) session.getAttribute(SessionUtil.USER_ID);
 
         Object applyError = session.getAttribute("applicationError");
         if (applyError != null) {
