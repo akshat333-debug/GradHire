@@ -35,6 +35,12 @@
 <% if (request.getAttribute("applicationSuccess") != null) { %>
 <div class="success"><%= request.getAttribute("applicationSuccess") %></div>
 <% } %>
+<% if (request.getAttribute("savedJobError") != null) { %>
+<div class="error"><%= request.getAttribute("savedJobError") %></div>
+<% } %>
+<% if (request.getAttribute("savedJobSuccess") != null) { %>
+<div class="success"><%= request.getAttribute("savedJobSuccess") %></div>
+<% } %>
 
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
     <button type="submit">Logout</button>

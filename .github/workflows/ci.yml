@@ -5,6 +5,9 @@ on:
     branches: ["**"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -48,7 +51,7 @@ jobs:
           exit 1
 
       - name: Initialize schema
-        run: mysql -h 127.0.0.1 -uroot -proot gradhire_db < /home/runner/work/GradHire/GradHire/sql/schema.sql
+        run: mysql -h 127.0.0.1 -uroot -proot gradhire_db < "$GITHUB_WORKSPACE/sql/schema.sql"
 
       - name: Run tests
         run: mvn -B test

@@ -119,6 +119,9 @@ public class ProfileServlet extends HttpServlet {
                     doGet(req, resp);
                     return;
                 }
+                if ("recruiter".equalsIgnoreCase(userType)) {
+                    role = "recruiter";
+                }
                 updated = adminDao.updateAdminProfile(userId, fullName, companyName, role);
                 if (updated) {
                     activityLogDao.logActivity(userType, userId, "profile_update", "Updated admin/recruiter profile.", req.getRemoteAddr(), req.getHeader("User-Agent"));

@@ -49,18 +49,18 @@ public class SavedJobsServlet extends HttpServlet {
                     savedJobDao.saveJob(studentId, jobId);
                     activityLogDao.logActivity("student", studentId, "saved_job", "Saved job ID: " + jobId, req.getRemoteAddr(), req.getHeader("User-Agent"));
                 }
-                session.setAttribute("applicationSuccess", "Job saved.");
+                session.setAttribute("savedJobSuccess", "Job saved.");
             } else if ("unsave".equalsIgnoreCase(action)) {
                 if (savedJobDao.removeSavedJob(studentId, jobId)) {
                     activityLogDao.logActivity("student", studentId, "unsaved_job", "Removed saved job ID: " + jobId, req.getRemoteAddr(), req.getHeader("User-Agent"));
                 }
-                session.setAttribute("applicationSuccess", "Saved job removed.");
+                session.setAttribute("savedJobSuccess", "Saved job removed.");
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
                 return;
             }
         } catch (SQLException exception) {
-            session.setAttribute("applicationError", "Unable to update saved jobs due to a database error. Please try again.");
+            session.setAttribute("savedJobError", "Unable to update saved jobs due to a database error. Please try again.");
         }
 
         resp.sendRedirect(req.getContextPath() + "/dashboard");

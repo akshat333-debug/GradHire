@@ -68,6 +68,7 @@
             </select>
             <% if ("recruiter".equalsIgnoreCase(userType)) { %>
             <input type="hidden" name="role" value="recruiter">
+            <p>Role: Recruiter (role changes require admin privileges).</p>
             <% } %>
             <button type="submit">Update Profile</button>
         </form>

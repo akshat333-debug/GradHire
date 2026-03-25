@@ -20,7 +20,7 @@ public class ActivityLogDao {
     public void logActivity(String userType, int userId, String activityType, String description, String ipAddress, String userAgent) throws SQLException {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT_ACTIVITY)) {
-            statement.setString(1, "recruiter".equalsIgnoreCase(userType) ? "admin" : userType);
+            statement.setString(1, normalizeUserType(userType));
             statement.setInt(2, userId);
             statement.setString(3, activityType);
             statement.setString(4, description);
@@ -34,7 +34,7 @@ public class ActivityLogDao {
         List<ActivityLog> logs = new ArrayList<>();
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_BY_USER)) {
-            statement.setString(1, "recruiter".equalsIgnoreCase(userType) ? "admin" : userType);
+            statement.setString(1, normalizeUserType(userType));
             statement.setInt(2, userId);
             statement.setInt(3, limit);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -52,5 +52,9 @@ public class ActivityLogDao {
             }
         }
         return logs;
+    }
+
+    private String normalizeUserType(String userType) {
+        return "recruiter".equalsIgnoreCase(userType) ? "admin" : userType;
     }
 }
