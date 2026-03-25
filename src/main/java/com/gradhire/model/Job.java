@@ -1,5 +1,7 @@
 package com.gradhire.model;
 
+import java.time.LocalDate;
+
 public class Job {
     private int jobId;
     private String jobTitle;
@@ -7,6 +9,7 @@ public class Job {
     private String jobType;
     private String domain;
     private String location;
+    private LocalDate applicationDeadline;
 
     public int getJobId() {
         return jobId;
@@ -54,5 +57,13 @@ public class Job {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public LocalDate getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
     }
 }

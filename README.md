@@ -244,10 +244,10 @@ You can use `src/main/resources/database.properties.template` as reference.
 ### 🔜 Next Steps
 
 - [ ] **Step 2**: Backend Development (Java DAO + Servlets)
-  - Database connection pooling
-  - DAO classes for each entity
-  - Servlets for business logic
-  - Session management
+  - ✅ Database connection utility configured via env vars/system properties
+  - ✅ Core DAO layer added: AuthDao, StudentDao, AdminDao, JobDao, ApplicationDao, SkillDao
+  - ✅ Core models added: Student, Admin, Job, Application, Skill, AuthResult
+  - 🔜 Next in Step 2: add remaining CRUD methods + integration tests
 
 - [ ] **Step 3**: Frontend Development (JSP + Bootstrap)
   - Student and admin dashboards
@@ -374,11 +374,11 @@ This project is created for educational purposes.
 
 ## 👨‍💻 Development
 
-**Current Phase**: Database Design ✅
-**Next Phase**: Backend Development (Java DAO + Servlets)
+**Current Phase**: Backend Development (Step 2 in progress) ✅
+**Next Phase**: JSP Frontend expansion and end-to-end flow completion
 
 For questions or contributions, please refer to the project documentation.
 
 ---
 
-**Last Updated**: October 24, 2025
+**Last Updated**: March 25, 2026
