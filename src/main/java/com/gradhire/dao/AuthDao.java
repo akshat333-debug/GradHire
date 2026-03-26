@@ -37,7 +37,7 @@ public class AuthDao {
                     return Optional.empty();
                 }
 
-                int userId = resultSet.getInt(1);
+                int userId = resultSet.getInt("student_id");
                 String fullName = resultSet.getString("full_name");
                 return Optional.of(new AuthResult(userId, userType, fullName));
             }
