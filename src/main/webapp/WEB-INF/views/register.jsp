@@ -33,7 +33,7 @@
         <input id="collegeName" name="collegeName" type="text" maxlength="150">
 
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" minlength="8" maxlength="72" required>
+        <input id="password" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
 
         <button type="submit">Register</button>
     </form>
