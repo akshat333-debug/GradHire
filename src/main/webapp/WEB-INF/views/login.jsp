@@ -39,6 +39,7 @@
         <button type="submit">Sign In</button>
     </form>
 
+    <p style="margin-top:1rem;"><a href="${pageContext.request.contextPath}/auth/register">New student? Register here</a></p>
     <p style="margin-top:1rem;"><a href="${pageContext.request.contextPath}/">Back to home</a></p>
 </div>
 </body>

@@ -29,12 +29,12 @@ Enter your MySQL root password when prompted.
 
 **Option A: From MySQL prompt**
 ```sql
-source /Users/agraw/Desktop/projects/gradHire/sql/schema.sql;
+source /absolute/path/to/GradHire/sql/schema.sql;
 ```
 
 **Option B: From command line**
 ```bash
-mysql -u root -p < /Users/agraw/Desktop/projects/gradHire/sql/schema.sql
+mysql -u root -p < /absolute/path/to/GradHire/sql/schema.sql
 ```
 
 ### Step 3: Verify Installation
@@ -118,7 +118,7 @@ EXIT;
 ### Step 2: Run Schema as New User
 
 ```bash
-mysql -u gradhire_user -p < /Users/agraw/Desktop/projects/gradHire/sql/schema.sql
+mysql -u gradhire_user -p < /absolute/path/to/GradHire/sql/schema.sql
 ```
 
 ---
@@ -201,7 +201,7 @@ EXIT;
 DROP DATABASE IF EXISTS gradhire_db;
 
 -- Then re-run the schema file
-source /Users/agraw/Desktop/projects/gradHire/sql/schema.sql;
+source /absolute/path/to/GradHire/sql/schema.sql;
 ```
 
 ### Issue 3: "File not found" when using source command
@@ -242,7 +242,7 @@ DROP PROCEDURE IF EXISTS sp_get_job_recommendations;
 
 ## 🗄️ Database Configuration for Java Application
 
-### Create application.properties (or database.properties)
+### Runtime database configuration
 
 ```properties
 # Database Configuration
@@ -302,7 +302,7 @@ See `test_queries.sql` for comprehensive test queries including:
 
 Run test queries:
 ```bash
-mysql -u root -p gradhire_db < /Users/agraw/Desktop/projects/gradHire/sql/test_queries.sql
+mysql -u root -p gradhire_db < /absolute/path/to/GradHire/sql/test_queries.sql
 ```
 
 ---
@@ -410,7 +410,7 @@ After successfully setting up the database:
 2. ✅ Test the stored procedure
 3. ✅ Configure database connection in Java
 4. ✅ Test JDBC connectivity
-5. ⏭️ **Proceed to Step 2**: Backend Development (Java DAO + Servlets)
+5. ⏭️ Deploy WAR to Tomcat and validate `/auth/register`, `/auth/login`, and `/dashboard` flows
 
 ---
 
@@ -436,4 +436,3 @@ If you encounter any issues:
 **Setup Guide Version**: 1.0  
 **Last Updated**: October 24, 2025  
 **Compatible with**: MySQL 8.0+
-
