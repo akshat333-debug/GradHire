@@ -150,6 +150,8 @@ Related endpoints in UI flow:
 - `/applications/apply`
 - `/applications/review`
 - `/jobs/manage`
+- `/jobs/saved`
+- `/profile`
 - `/auth/logout`
 
 #### Test Instructions
@@ -311,6 +313,7 @@ You can use `src/main/resources/database.properties.template` as reference.
 - ✅ Track application status
 - ✅ Save jobs for later
 - ✅ View activity history
+- ✅ Manage profile details
 
 ### Recruiter/Admin Features
 
@@ -320,6 +323,7 @@ You can use `src/main/resources/database.properties.template` as reference.
 - ✅ Update application status
 - ✅ Access analytics dashboard
 - ✅ Activity logging
+- ✅ Manage profile details
 
 ### System Features
 
@@ -400,8 +404,20 @@ This project is created for educational purposes.
 
 ## 👨‍💻 Development
 
-**Current Phase**: Backend Development (Step 2 in progress) ✅
-**Next Phase**: JSP Frontend expansion and end-to-end flow completion
+**Current Phase**: JSP frontend + end-to-end role dashboards with profile/saved/recommendation/activity integrations ✅
+**Next Phase**: continued test depth and deployment hardening
+
+## 🔁 CI Baseline
+
+This repository now includes a GitHub Actions workflow at:
+
+- `.github/workflows/ci.yml`
+
+It provisions MySQL 8, loads `sql/schema.sql`, and runs:
+
+```bash
+mvn -B test
+```
 
 For questions or contributions, please refer to the project documentation.
 

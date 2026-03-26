@@ -2,6 +2,7 @@
 <%@ page import="java.util.Set" %>
 <%@ page import="com.gradhire.model.Job" %>
 <%@ page import="com.gradhire.model.Application" %>
+<%@ page import="com.gradhire.model.ActivityLog" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
@@ -34,10 +35,17 @@
 <% if (request.getAttribute("applicationSuccess") != null) { %>
 <div class="success"><%= request.getAttribute("applicationSuccess") %></div>
 <% } %>
+<% if (request.getAttribute("savedJobError") != null) { %>
+<div class="error"><%= request.getAttribute("savedJobError") %></div>
+<% } %>
+<% if (request.getAttribute("savedJobSuccess") != null) { %>
+<div class="success"><%= request.getAttribute("savedJobSuccess") %></div>
+<% } %>
 
 <form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
     <button type="submit">Logout</button>
 </form>
+<a href="${pageContext.request.contextPath}/profile">Manage Profile</a>
 
 <div class="row">
     <div class="column">
@@ -45,6 +53,7 @@
         <%
             List<Job> jobs = (List<Job>) request.getAttribute("jobs");
             Set<Integer> appliedJobIds = (Set<Integer>) request.getAttribute("appliedJobIds");
+            Set<Integer> savedJobIds = (Set<Integer>) request.getAttribute("savedJobIds");
             if (jobs == null || jobs.isEmpty()) {
         %>
         <p>No jobs available.</p>
@@ -68,11 +77,57 @@
                 <button type="submit">Apply</button>
             </form>
             <% } %>
+            <% boolean alreadySaved = savedJobIds != null && savedJobIds.contains(job.getJobId()); %>
+            <form class="inline" method="post" action="${pageContext.request.contextPath}/jobs/saved">
+                <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
+                <input type="hidden" name="action" value="<%= alreadySaved ? "unsave" : "save" %>">
+                <button type="submit"><%= alreadySaved ? "Unsave Job" : "Save Job" %></button>
+            </form>
         </div>
         <% } } %>
     </div>
 
     <div class="column">
+        <h2>Recommended Jobs</h2>
+        <%
+            List<Job> recommendedJobs = (List<Job>) request.getAttribute("recommendedJobs");
+            if (recommendedJobs == null || recommendedJobs.isEmpty()) {
+        %>
+        <p>No recommendations available right now.</p>
+        <% } else {
+            for (Job recJob : recommendedJobs) {
+        %>
+        <div class="card">
+            <% pageContext.setAttribute("recJobTitle", recJob.getJobTitle()); %>
+            <% pageContext.setAttribute("recCompany", recJob.getCompanyName()); %>
+            <% pageContext.setAttribute("recDomain", recJob.getDomain()); %>
+            <h3>${fn:escapeXml(recJobTitle)}</h3>
+            <p>${fn:escapeXml(recCompany)} | ${fn:escapeXml(recDomain)}</p>
+            <p><a href="${pageContext.request.contextPath}/jobs/details?jobId=<%= recJob.getJobId() %>">View Details</a></p>
+        </div>
+        <% } } %>
+
+        <h2>Saved Jobs</h2>
+        <%
+            List<Job> savedJobs = (List<Job>) request.getAttribute("savedJobs");
+            if (savedJobs == null || savedJobs.isEmpty()) {
+        %>
+        <p>No saved jobs yet.</p>
+        <% } else {
+            for (Job savedJob : savedJobs) {
+        %>
+        <div class="card">
+            <% pageContext.setAttribute("savedJobTitle", savedJob.getJobTitle()); %>
+            <% pageContext.setAttribute("savedCompany", savedJob.getCompanyName()); %>
+            <p><strong>${fn:escapeXml(savedJobTitle)}</strong> (${fn:escapeXml(savedCompany)})</p>
+            <form class="inline" method="post" action="${pageContext.request.contextPath}/jobs/saved">
+                <input type="hidden" name="jobId" value="<%= savedJob.getJobId() %>">
+                <input type="hidden" name="action" value="unsave">
+                <button type="submit">Remove</button>
+            </form>
+        </div>
+        <% } } %>
+
         <h2>Your Applications</h2>
         <%
             List<Application> applications = (List<Application>) request.getAttribute("applications");
@@ -94,6 +149,23 @@
             <% pageContext.setAttribute("reviewerNotes", application.getReviewerNotes()); %>
             <p class="reviewer-notes">Reviewer Notes: ${fn:escapeXml(reviewerNotes)}</p>
             <% } %>
+        </div>
+        <% } } %>
+
+        <h2>Recent Activity</h2>
+        <%
+            List<ActivityLog> activityLogs = (List<ActivityLog>) request.getAttribute("activityLogs");
+            if (activityLogs == null || activityLogs.isEmpty()) {
+        %>
+        <p>No recent activity.</p>
+        <% } else {
+            for (ActivityLog log : activityLogs) {
+        %>
+        <div class="card">
+            <% pageContext.setAttribute("activityType", log.getActivityType()); %>
+            <% pageContext.setAttribute("activityDesc", log.getActivityDescription()); %>
+            <p><strong>${fn:escapeXml(activityType)}</strong> - <%= log.getCreatedAt() %></p>
+            <p>${fn:escapeXml(activityDesc)}</p>
         </div>
         <% } } %>
     </div>

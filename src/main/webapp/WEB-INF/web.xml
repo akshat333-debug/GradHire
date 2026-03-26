@@ -87,6 +87,24 @@
         <url-pattern>/applications/review</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>savedJobsServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.SavedJobsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>savedJobsServlet</servlet-name>
+        <url-pattern>/jobs/saved</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>profileServlet</servlet-name>
+        <servlet-class>com.gradhire.servlet.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>profileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
