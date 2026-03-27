@@ -10,207 +10,276 @@
 <head>
     <title>GradHire - Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        .row { display: flex; gap: 2rem; align-items: flex-start; }
-        .column { flex: 1; }
-        .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-        .error { color: #b00020; margin-bottom: 1rem; }
-        .success { color: #0f5132; margin-bottom: 1rem; }
-        form.inline { display: inline; }
-        textarea { width: 100%; box-sizing: border-box; }
-        select, button { margin-top: .5rem; }
-        .reviewer-notes { white-space: pre-wrap; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/styles.css">
 </head>
-<body>
-<h1>Dashboard</h1>
-<p>Welcome, <strong><%= session.getAttribute("userName") %></strong> (<%= session.getAttribute("userType") %>)</p>
+<body class="page">
+<header class="navbar">
+    <div class="navbar-inner">
+        <div class="brand">
+            <span class="brand-badge">GH</span>
+            GradHire
+        </div>
+        <div class="nav-actions">
+            <a class="btn btn-ghost" href="${pageContext.request.contextPath}/profile">Profile</a>
+            <form class="nav-actions" method="post" action="${pageContext.request.contextPath}/auth/logout" style="margin:0;">
+                <button class="btn btn-primary" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>
 
-<% if (request.getAttribute("dashboardError") != null) { %>
-<div class="error"><%= request.getAttribute("dashboardError") %></div>
-<% } %>
-<% if (request.getAttribute("applicationError") != null) { %>
-<div class="error"><%= request.getAttribute("applicationError") %></div>
-<% } %>
-<% if (request.getAttribute("applicationSuccess") != null) { %>
-<div class="success"><%= request.getAttribute("applicationSuccess") %></div>
-<% } %>
-<% if (request.getAttribute("jobManageError") != null) { %>
-<div class="error"><%= request.getAttribute("jobManageError") %></div>
-<% } %>
-<% if (request.getAttribute("jobManageSuccess") != null) { %>
-<div class="success"><%= request.getAttribute("jobManageSuccess") %></div>
-<% } %>
+<main class="content">
+    <div class="section-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="muted">Welcome, <strong><%= session.getAttribute("userName") %></strong>. Use the cards below to manage jobs and applications.</p>
+        </div>
+        <span class="pill">Role: <%= session.getAttribute("userType") %></span>
+    </div>
 
-<form class="inline" method="post" action="${pageContext.request.contextPath}/auth/logout">
-    <button type="submit">Logout</button>
-</form>
+    <% if (request.getAttribute("dashboardError") != null) { %>
+    <div class="alert alert-error"><%= request.getAttribute("dashboardError") %></div>
+    <% } %>
+    <% if (request.getAttribute("applicationError") != null) { %>
+    <div class="alert alert-error"><%= request.getAttribute("applicationError") %></div>
+    <% } %>
+    <% if (request.getAttribute("applicationSuccess") != null) { %>
+    <div class="alert alert-success"><%= request.getAttribute("applicationSuccess") %></div>
+    <% } %>
+    <% if (request.getAttribute("jobManageError") != null) { %>
+    <div class="alert alert-error"><%= request.getAttribute("jobManageError") %></div>
+    <% } %>
+    <% if (request.getAttribute("jobManageSuccess") != null) { %>
+    <div class="alert alert-success"><%= request.getAttribute("jobManageSuccess") %></div>
+    <% } %>
 
-<div class="row">
-    <div class="column">
-        <h2>Active Jobs</h2>
-        <%
-            List<Job> jobs = (List<Job>) request.getAttribute("jobs");
-            Set<Integer> appliedJobIds = (Set<Integer>) request.getAttribute("appliedJobIds");
-            if (jobs == null || jobs.isEmpty()) {
-        %>
-        <p>No jobs available.</p>
-        <% } else {
-            for (Job job : jobs) {
-        %>
-        <div class="card">
-            <h3><%= job.getJobTitle() %></h3>
-            <p><%= job.getCompanyName() %> | <%= job.getJobType() %></p>
-            <p><%= job.getDomain() %> | <%= job.getLocation() %></p>
-            <p>Deadline: <%= job.getApplicationDeadline() %></p>
-            <p><a href="${pageContext.request.contextPath}/jobs/details?jobId=<%= job.getJobId() %>">View Details</a></p>
+    <div class="grid grid-2">
+        <section class="stack">
+            <div class="section-header">
+                <h2>Active Jobs</h2>
+                <span class="pill">Discover roles</span>
+            </div>
+            <%
+                List<Job> jobs = (List<Job>) request.getAttribute("jobs");
+                Set<Integer> appliedJobIds = (Set<Integer>) request.getAttribute("appliedJobIds");
+                if (jobs == null || jobs.isEmpty()) {
+            %>
+            <div class="card">
+                <p class="muted">No jobs available.</p>
+            </div>
+            <% } else {
+                for (Job job : jobs) {
+            %>
+            <div class="card stack">
+                <div class="section-header">
+                    <div>
+                        <h3><%= job.getJobTitle() %></h3>
+                        <p class="muted"><%= job.getCompanyName() %> · <%= job.getJobType() %></p>
+                    </div>
+                    <span class="badge">Deadline: <%= job.getApplicationDeadline() %></span>
+                </div>
+                <div class="pill-group">
+                    <span class="tag"><%= job.getDomain() %></span>
+                    <span class="tag"><%= job.getLocation() %></span>
+                </div>
+                <a class="btn btn-link" href="${pageContext.request.contextPath}/jobs/details?jobId=<%= job.getJobId() %>">View Details</a>
+                <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
+                <% boolean alreadyApplied = appliedJobIds != null && appliedJobIds.contains(job.getJobId()); %>
+                <% if (alreadyApplied) { %>
+                <div class="alert alert-success">Already applied</div>
+                <% } else { %>
+                <form class="stack" method="post" action="${pageContext.request.contextPath}/applications/apply">
+                    <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
+                    <div class="field">
+                        <label>Cover letter (optional)</label>
+                        <textarea name="coverLetter" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Apply</button>
+                </form>
+                <% } %>
+                <% } %>
+            </div>
+            <% } } %>
+        </section>
+
+        <section class="stack">
             <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
-            <% boolean alreadyApplied = appliedJobIds != null && appliedJobIds.contains(job.getJobId()); %>
-            <% if (alreadyApplied) { %>
-            <p><strong>Already applied</strong></p>
+            <div class="card stack">
+                <div class="section-header">
+                    <h2>Your Applications</h2>
+                    <span class="pill">Status updates</span>
+                </div>
+                <%
+                    List<Application> applications = (List<Application>) request.getAttribute("applications");
+                    if (applications == null || applications.isEmpty()) {
+                %>
+                <p class="muted">No applications yet.</p>
+                <% } else {
+                    for (Application application : applications) {
+                %>
+                <div class="card" style="margin-top:.5rem;">
+                    <p class="muted">Application ID: <%= application.getApplicationId() %> · Job ID: <%= application.getJobId() %></p>
+                    <p>Status: <strong><%= application.getApplicationStatus() %></strong></p>
+                    <p>Applied At: <%= application.getAppliedAt() %></p>
+                    <% if (application.getReviewedAt() != null) { %>
+                    <p>Reviewed At: <%= application.getReviewedAt() %></p>
+                    <% } %>
+                    <% if (application.getReviewerNotes() != null && !application.getReviewerNotes().trim().isEmpty()) { %>
+                    <% pageContext.setAttribute("reviewerNotes", application.getReviewerNotes()); %>
+                    <p class="muted">Reviewer Notes:</p>
+                    <p>${fn:escapeXml(reviewerNotes)}</p>
+                    <% } %>
+                </div>
+                <% } } %>
+            </div>
             <% } else { %>
-            <form method="post" action="${pageContext.request.contextPath}/applications/apply">
-                <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
-                <label>Cover letter (optional)</label>
-                <textarea name="coverLetter" rows="3"></textarea>
-                <button type="submit">Apply</button>
-            </form>
+            <div class="card stack">
+                <div class="section-header">
+                    <h2>Post a Job</h2>
+                    <span class="pill">Create new role</span>
+                </div>
+                <form class="stack" method="post" action="${pageContext.request.contextPath}/jobs/manage">
+                    <input type="hidden" name="action" value="create">
+                    <div class="field">
+                        <label>Job Title</label>
+                        <input type="text" name="jobTitle" maxlength="200" required>
+                    </div>
+                    <div class="field">
+                        <label>Company Name</label>
+                        <input type="text" name="companyName" maxlength="150" required>
+                    </div>
+                    <div class="field">
+                        <label>Job Type</label>
+                        <select name="jobType" required>
+                            <option value="Internship">Internship</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Domain</label>
+                        <input type="text" name="domain" maxlength="100">
+                    </div>
+                    <div class="field">
+                        <label>Description</label>
+                        <textarea name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Location</label>
+                        <input type="text" name="location" maxlength="150">
+                    </div>
+                    <div class="field">
+                        <label>Application Deadline</label>
+                        <input type="date" name="applicationDeadline">
+                    </div>
+                    <div class="field">
+                        <label>Job Status</label>
+                        <select name="jobStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Create Job</button>
+                </form>
+            </div>
+
+            <div class="card stack">
+                <div class="section-header">
+                    <h2>Manage Your Jobs</h2>
+                    <span class="pill">Update postings</span>
+                </div>
+                <%
+                    List<Job> managedJobs = (List<Job>) request.getAttribute("managedJobs");
+                    if (managedJobs == null || managedJobs.isEmpty()) {
+                %>
+                <p class="muted">No jobs posted yet.</p>
+                <% } else {
+                    for (Job managedJob : managedJobs) {
+                %>
+                <% pageContext.setAttribute("managedJobTitle", managedJob.getJobTitle()); %>
+                <% pageContext.setAttribute("managedJobDomain", managedJob.getDomain() == null ? "" : managedJob.getDomain()); %>
+                <% pageContext.setAttribute("managedJobLocation", managedJob.getLocation() == null ? "" : managedJob.getLocation()); %>
+                <% pageContext.setAttribute("managedJobDeadline", managedJob.getApplicationDeadline()); %>
+                <div class="card" style="margin-top:.5rem;">
+                    <p class="muted">Job ID: <strong><%= managedJob.getJobId() %></strong></p>
+                    <form class="stack" method="post" action="${pageContext.request.contextPath}/jobs/manage">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="jobId" value="<%= managedJob.getJobId() %>">
+                        <div class="field">
+                            <label>Job Title</label>
+                            <input type="text" name="jobTitle" maxlength="200" value="${fn:escapeXml(managedJobTitle)}" required>
+                        </div>
+                        <div class="field">
+                            <label>Domain</label>
+                            <input type="text" name="domain" maxlength="100" value="${fn:escapeXml(managedJobDomain)}">
+                        </div>
+                        <div class="field">
+                            <label>Location</label>
+                            <input type="text" name="location" maxlength="150" value="${fn:escapeXml(managedJobLocation)}">
+                        </div>
+                        <div class="field">
+                            <label>Application Deadline</label>
+                            <input type="date" name="applicationDeadline" value="${managedJobDeadline}">
+                        </div>
+                        <div class="field">
+                            <label>Status</label>
+                            <select name="jobStatus" required>
+                                <option value="Active" <%= "Active".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Active</option>
+                                <option value="Draft" <%= "Draft".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Draft</option>
+                                <option value="Closed" <%= "Closed".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Closed</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Update Job</button>
+                    </form>
+                </div>
+                <% } } %>
+            </div>
+
+            <div class="card stack">
+                <div class="section-header">
+                    <h2>Applications to Review</h2>
+                    <span class="pill">Move candidates forward</span>
+                </div>
+                <%
+                    List<ApplicationReviewItem> reviewApplications = (List<ApplicationReviewItem>) request.getAttribute("reviewApplications");
+                    if (reviewApplications == null || reviewApplications.isEmpty()) {
+                %>
+                <p class="muted">No applications to review.</p>
+                <% } else {
+                    for (ApplicationReviewItem item : reviewApplications) {
+                %>
+                <div class="card" style="margin-top:.5rem;">
+                    <p class="muted">Application ID: <%= item.getApplicationId() %></p>
+                    <p><strong><%= item.getJobTitle() %></strong> (ID: <%= item.getJobId() %>)</p>
+                    <p>Candidate: <%= item.getStudentName() %> (ID: <%= item.getStudentId() %>)</p>
+                    <p>Current Status: <strong><%= item.getApplicationStatus() %></strong></p>
+                    <p>Applied At: <%= item.getAppliedAt() %></p>
+                    <form class="stack" method="post" action="${pageContext.request.contextPath}/applications/review">
+                        <input type="hidden" name="applicationId" value="<%= item.getApplicationId() %>">
+                        <div class="field">
+                            <label>Status</label>
+                            <select name="status" required>
+                                <option value="Pending" <%= "Pending".equals(item.getApplicationStatus()) ? "selected" : "" %>>Pending</option>
+                                <option value="Reviewed" <%= "Reviewed".equals(item.getApplicationStatus()) ? "selected" : "" %>>Reviewed</option>
+                                <option value="Shortlisted" <%= "Shortlisted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Shortlisted</option>
+                                <option value="Rejected" <%= "Rejected".equals(item.getApplicationStatus()) ? "selected" : "" %>>Rejected</option>
+                                <option value="Accepted" <%= "Accepted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Accepted</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Reviewer Notes (optional)</label>
+                            <textarea name="reviewerNotes" rows="3"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Update Status</button>
+                    </form>
+                </div>
+                <% } } %>
+            </div>
             <% } %>
-            <% } %>
-        </div>
-        <% } } %>
+        </section>
     </div>
-
-    <div class="column">
-        <% if ("student".equalsIgnoreCase((String) session.getAttribute("userType"))) { %>
-        <h2>Your Applications</h2>
-        <%
-            List<Application> applications = (List<Application>) request.getAttribute("applications");
-            if (applications == null || applications.isEmpty()) {
-        %>
-        <p>No applications yet.</p>
-        <% } else {
-            for (Application application : applications) {
-        %>
-        <div class="card">
-            <p>Application ID: <%= application.getApplicationId() %></p>
-            <p>Job ID: <%= application.getJobId() %></p>
-            <p>Status: <strong><%= application.getApplicationStatus() %></strong></p>
-            <p>Applied At: <%= application.getAppliedAt() %></p>
-            <% if (application.getReviewedAt() != null) { %>
-            <p>Reviewed At: <%= application.getReviewedAt() %></p>
-            <% } %>
-            <% if (application.getReviewerNotes() != null && !application.getReviewerNotes().trim().isEmpty()) { %>
-            <% pageContext.setAttribute("reviewerNotes", application.getReviewerNotes()); %>
-            <p class="reviewer-notes">Reviewer Notes: ${fn:escapeXml(reviewerNotes)}</p>
-            <% } %>
-        </div>
-        <% } } %>
-        <% } else { %>
-        <h2>Post a Job</h2>
-        <div class="card">
-            <form method="post" action="${pageContext.request.contextPath}/jobs/manage">
-                <input type="hidden" name="action" value="create">
-                <label>Job Title</label>
-                <input type="text" name="jobTitle" maxlength="200" required>
-                <label>Company Name</label>
-                <input type="text" name="companyName" maxlength="150" required>
-                <label>Job Type</label>
-                <select name="jobType" required>
-                    <option value="Internship">Internship</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                    <option value="Contract">Contract</option>
-                </select>
-                <label>Domain</label>
-                <input type="text" name="domain" maxlength="100">
-                <label>Description</label>
-                <textarea name="description" rows="4" required></textarea>
-                <label>Location</label>
-                <input type="text" name="location" maxlength="150">
-                <label>Application Deadline</label>
-                <input type="date" name="applicationDeadline">
-                <label>Job Status</label>
-                <select name="jobStatus" required>
-                    <option value="Active">Active</option>
-                    <option value="Draft">Draft</option>
-                    <option value="Closed">Closed</option>
-                </select>
-                <button type="submit">Create Job</button>
-            </form>
-        </div>
-
-        <h2>Manage Your Jobs</h2>
-        <%
-            List<Job> managedJobs = (List<Job>) request.getAttribute("managedJobs");
-            if (managedJobs == null || managedJobs.isEmpty()) {
-        %>
-        <p>No jobs posted yet.</p>
-        <% } else {
-            for (Job managedJob : managedJobs) {
-        %>
-        <% pageContext.setAttribute("managedJobTitle", managedJob.getJobTitle()); %>
-        <% pageContext.setAttribute("managedJobDomain", managedJob.getDomain() == null ? "" : managedJob.getDomain()); %>
-        <% pageContext.setAttribute("managedJobLocation", managedJob.getLocation() == null ? "" : managedJob.getLocation()); %>
-        <% pageContext.setAttribute("managedJobDeadline", managedJob.getApplicationDeadline()); %>
-        <div class="card">
-            <p>Job ID: <strong><%= managedJob.getJobId() %></strong></p>
-            <form method="post" action="${pageContext.request.contextPath}/jobs/manage">
-                <input type="hidden" name="action" value="update">
-                <input type="hidden" name="jobId" value="<%= managedJob.getJobId() %>">
-                <label>Job Title</label>
-                <input type="text" name="jobTitle" maxlength="200" value="${fn:escapeXml(managedJobTitle)}" required>
-                <label>Domain</label>
-                <input type="text" name="domain" maxlength="100" value="${fn:escapeXml(managedJobDomain)}">
-                <label>Location</label>
-                <input type="text" name="location" maxlength="150" value="${fn:escapeXml(managedJobLocation)}">
-                <label>Application Deadline</label>
-                <input type="date" name="applicationDeadline" value="${managedJobDeadline}">
-                <label>Status</label>
-                <select name="jobStatus" required>
-                    <option value="Active" <%= "Active".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Active</option>
-                    <option value="Draft" <%= "Draft".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Draft</option>
-                    <option value="Closed" <%= "Closed".equals(managedJob.getJobStatus()) ? "selected" : "" %>>Closed</option>
-                </select>
-                <button type="submit">Update Job</button>
-            </form>
-        </div>
-        <% } } %>
-
-        <h2>Applications to Review</h2>
-        <%
-            List<ApplicationReviewItem> reviewApplications = (List<ApplicationReviewItem>) request.getAttribute("reviewApplications");
-            if (reviewApplications == null || reviewApplications.isEmpty()) {
-        %>
-        <p>No applications to review.</p>
-        <% } else {
-            for (ApplicationReviewItem item : reviewApplications) {
-        %>
-        <div class="card">
-            <p>Application ID: <%= item.getApplicationId() %></p>
-            <p>Job: <strong><%= item.getJobTitle() %></strong> (ID: <%= item.getJobId() %>)</p>
-            <p>Candidate: <%= item.getStudentName() %> (ID: <%= item.getStudentId() %>)</p>
-            <p>Current Status: <strong><%= item.getApplicationStatus() %></strong></p>
-            <p>Applied At: <%= item.getAppliedAt() %></p>
-            <form method="post" action="${pageContext.request.contextPath}/applications/review">
-                <input type="hidden" name="applicationId" value="<%= item.getApplicationId() %>">
-                <label>Status</label>
-                <select name="status" required>
-                    <option value="Pending" <%= "Pending".equals(item.getApplicationStatus()) ? "selected" : "" %>>Pending</option>
-                    <option value="Reviewed" <%= "Reviewed".equals(item.getApplicationStatus()) ? "selected" : "" %>>Reviewed</option>
-                    <option value="Shortlisted" <%= "Shortlisted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Shortlisted</option>
-                    <option value="Rejected" <%= "Rejected".equals(item.getApplicationStatus()) ? "selected" : "" %>>Rejected</option>
-                    <option value="Accepted" <%= "Accepted".equals(item.getApplicationStatus()) ? "selected" : "" %>>Accepted</option>
-                </select>
-                <label>Reviewer Notes (optional)</label>
-                <textarea name="reviewerNotes" rows="3"></textarea>
-                <button type="submit">Update Status</button>
-            </form>
-        </div>
-        <% } } %>
-        <% } %>
-    </div>
-</div>
+</main>
 </body>
 </html>

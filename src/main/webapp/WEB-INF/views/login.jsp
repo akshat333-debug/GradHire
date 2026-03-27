@@ -4,43 +4,69 @@
 <head>
     <title>GradHire - Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        .container { max-width: 500px; margin: auto; }
-        .error { color: #b00020; margin-bottom: 1rem; }
-        label { display: block; margin-top: 1rem; }
-        input, select, textarea { width: 100%; padding: .6rem; margin-top: .25rem; box-sizing: border-box; }
-        button { margin-top: 1rem; padding: .7rem 1rem; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/styles.css">
 </head>
-<body>
-<div class="container">
-    <h1>Login</h1>
-    <p>Use role + email + password from your MySQL data.</p>
+<body class="page">
+<header class="navbar">
+    <div class="navbar-inner">
+        <div class="brand">
+            <span class="brand-badge">GH</span>
+            GradHire
+        </div>
+        <div class="nav-actions">
+            <a class="btn btn-ghost" href="${pageContext.request.contextPath}/">Home</a>
+            <a class="btn btn-primary" href="${pageContext.request.contextPath}/auth/register">Create account</a>
+        </div>
+    </div>
+</header>
 
-    <% if (request.getAttribute("error") != null) { %>
-    <div class="error"><%= request.getAttribute("error") %></div>
-    <% } %>
+<main class="content">
+    <div class="grid grid-2" style="align-items: center;">
+        <section class="hero">
+            <span class="badge">Welcome back</span>
+            <h1>Sign in to your workspace</h1>
+            <p class="muted">Use the role, email, and password seeded in your MySQL data. Each role lands on its own dashboard.</p>
+            <div class="pill-group">
+                <span class="pill">Student</span>
+                <span class="pill">Recruiter</span>
+                <span class="pill">Admin</span>
+            </div>
+        </section>
 
-    <form method="post" action="${pageContext.request.contextPath}/auth/login">
-        <label for="role">Role</label>
-        <select id="role" name="role" required>
-            <option value="student">Student</option>
-            <option value="recruiter">Recruiter</option>
-            <option value="admin">Admin</option>
-        </select>
+        <section class="card stack">
+            <div class="section-header">
+                <h2>Login</h2>
+                <a class="btn btn-link" href="${pageContext.request.contextPath}/auth/register">New student? Register</a>
+            </div>
 
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required>
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="alert alert-error"><%= request.getAttribute("error") %></div>
+            <% } %>
 
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" required>
+            <form class="stack" method="post" action="${pageContext.request.contextPath}/auth/login">
+                <div class="field">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="student">Student</option>
+                        <option value="recruiter">Recruiter</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
 
-        <button type="submit">Sign In</button>
-    </form>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required>
+                </div>
 
-    <p style="margin-top:1rem;"><a href="${pageContext.request.contextPath}/auth/register">New student? Register here</a></p>
-    <p style="margin-top:1rem;"><a href="${pageContext.request.contextPath}/">Back to home</a></p>
-</div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" required>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Sign In</button>
+            </form>
+        </section>
+    </div>
+</main>
 </body>
 </html>
