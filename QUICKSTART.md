@@ -19,7 +19,7 @@ Get the GradHire database up and running in 5 minutes!
 Open terminal and run:
 
 ```bash
-mysql -u root -p < /Users/agraw/Desktop/projects/gradHire/sql/schema.sql
+mysql -u root -p < /absolute/path/to/GradHire/sql/schema.sql
 ```
 
 Enter your MySQL password when prompted.
@@ -35,7 +35,7 @@ You should see 9 tables and 3 views.
 ### Step 3: Test the Database
 
 ```bash
-mysql -u root -p gradhire_db < /Users/agraw/Desktop/projects/gradHire/sql/test_queries.sql
+mysql -u root -p gradhire_db < /absolute/path/to/GradHire/sql/test_queries.sql
 ```
 
 ---
@@ -94,12 +94,10 @@ CALL sp_get_job_recommendations(1);
 
 ## 📚 What's Next?
 
-1. ✅ **Step 1 Complete** - Database is ready!
-2. ⏭️ **Step 2** - Build Java backend (DAO + Servlets)
-3. ⏭️ **Step 3** - Create JSP frontend pages
-4. ⏭️ **Step 4** - Implement authentication
-5. ⏭️ **Step 5** - Add recommendation engine
-6. ⏭️ **Step 6** - Deploy to Tomcat
+1. ✅ **Database setup complete**
+2. ▶️ Build and test the app: `mvn clean package` then `mvn test`
+3. ▶️ Deploy `target/gradhire.war` to Tomcat 9+
+4. ▶️ Open `/auth/register` (student sign-up) or `/auth/login`
 
 ---
 
@@ -150,7 +148,6 @@ If you see tables and data, you're all set!
 
 ---
 
-**Next**: Proceed to Step 2 - Backend Development!
+**Next**: Run and validate end-to-end app flows in Tomcat.
 
 Happy Coding! 💻
-

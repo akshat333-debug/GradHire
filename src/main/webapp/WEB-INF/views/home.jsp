@@ -20,10 +20,12 @@
         <ul>
             <li><code>/health</code></li>
             <li><code>/auth/login</code></li>
+            <li><code>/auth/register</code></li>
             <li><code>/dashboard</code> (after login)</li>
             <li><code>/jobs/details?jobId=&lt;id&gt;</code> (after login)</li>
         </ul>
         <a class="button" href="${pageContext.request.contextPath}/auth/login">Go to Login</a>
+        <a class="button" href="${pageContext.request.contextPath}/auth/register" style="margin-left:.5rem;background:#198754;">Register</a>
     </div>
 </div>
 </body>
